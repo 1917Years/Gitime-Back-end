@@ -10,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
@@ -30,6 +31,7 @@ public class GlobalExceptionAdvice {
     @ExceptionHandler(value = {HttpMessageNotReadableException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponseDto methodArgumentNotValidException(HttpMessageNotReadableException e) {
-        return new ErrorResponseDto(400,e.getLocalizedMessage(),null);
+        return new ErrorResponseDto(400, e.getLocalizedMessage(), null);
     }
+
 }

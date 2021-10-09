@@ -1,6 +1,5 @@
 package capstone.gitime.api.service.dto;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

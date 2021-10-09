@@ -2,6 +2,7 @@ package capstone.gitime.domain.member.entity;
 
 import capstone.gitime.domain.common.entity.BaseTimeEntity;
 import capstone.gitime.domain.common.entity.GitRepo;
+import capstone.gitime.domain.memberTeam.entity.MemberTeam;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,6 +38,10 @@ public abstract class Member extends BaseTimeEntity {
 
     @Enumerated(value = EnumType.STRING)
     private Authority authority;
+
+    // 연관관계 필드
+    @OneToMany(mappedBy = "member")
+    private List<MemberTeam> memberTeams = new ArrayList<>();
 
     public Member(String email, String password, String userName, String nickName, String phoneNumber, LocalDate birth, Authority authority) {
         this.email = email;
