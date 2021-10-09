@@ -1,5 +1,6 @@
 package capstone.gitime.domain.member.service;
 
+import capstone.gitime.api.exception.exception.member.NotFoundEmailException;
 import capstone.gitime.domain.member.entity.Member;
 import capstone.gitime.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class AuthUserDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Member findMember = memberRepository.findByEmail(username)
-                .orElseThrow(() -> new RuntimeException());
+                .orElseThrow(() -> new NotFoundEmailException("이메일을 찾을 수 없습니다."));
 
         GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(findMember.getAuthority().toString());
         return new User(String.valueOf(findMember.getId()), findMember.getPassword(), Collections.singleton(grantedAuthority));

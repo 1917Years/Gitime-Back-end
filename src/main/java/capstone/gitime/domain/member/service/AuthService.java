@@ -4,6 +4,7 @@ import capstone.gitime.api.common.token.TokenDto;
 import capstone.gitime.api.common.token.TokenProvider;
 import capstone.gitime.api.controller.dto.OwnMemberJoinDto;
 import capstone.gitime.api.controller.dto.OwnMemberLoginDto;
+import capstone.gitime.api.exception.exception.member.DuplicateEmailException;
 import capstone.gitime.domain.member.repository.MemberRepository;
 import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +40,7 @@ public class AuthService {
 
     private void DuplicateEmailExists(OwnMemberJoinDto member) {
         if (memberRepository.existsByEmail(member.getEmail())) {
-            throw new RuntimeException();
+            throw new DuplicateEmailException("해당 이메일은 이미 가입이 완료된 회원입니다.");
         }
     }
 }

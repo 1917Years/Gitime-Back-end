@@ -38,8 +38,6 @@ public abstract class Member extends BaseTimeEntity {
     @Enumerated(value = EnumType.STRING)
     private Authority authority;
 
-    private boolean gitSync;
-
     public Member(String email, String password, String userName, String nickName, String phoneNumber, LocalDate birth, Authority authority) {
         this.email = email;
         this.password = password;
@@ -48,10 +46,10 @@ public abstract class Member extends BaseTimeEntity {
         this.phoneNumber = phoneNumber;
         this.birth = birth;
         this.authority = authority;
-        this.gitSync = false;
     }
 
+    // Update To Authority -> ROLE_SYNC_USER
     public void updateSync() {
-        this.gitSync = true;
+        this.authority = Authority.ROLE_SYNC_USER;
     }
 }

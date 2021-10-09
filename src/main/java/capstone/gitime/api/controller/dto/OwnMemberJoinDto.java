@@ -20,7 +20,7 @@ public class OwnMemberJoinDto {
                 .password(passwordEncoder.encode(this.getPassword()))
                 .userName(this.getUsername())
                 .nickName(this.getNickName())
-                .authority(Authority.ROLE_USER)
+                .authority(Authority.ROLE_NOT_SYNC_USER)
                 .build();
     }
 }

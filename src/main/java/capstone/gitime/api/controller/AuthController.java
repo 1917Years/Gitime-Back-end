@@ -7,7 +7,10 @@ import capstone.gitime.domain.member.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,13 +22,13 @@ public class AuthController {
 
     @PostMapping("/join")
     @ResponseStatus(value = HttpStatus.CREATED)
-    public String join(@RequestBody OwnMemberJoinDto joinDto) {
+    public String join(@RequestBody @Validated OwnMemberJoinDto joinDto) {
         authService.ownJoin(joinDto);
         return "OK!";
     }
 
     @PostMapping("/login")
-    public TokenDto login(@RequestBody OwnMemberLoginDto loginDto) {
+    public TokenDto login(@RequestBody @Validated OwnMemberLoginDto loginDto) {
         return authService.ownLogin(loginDto);
     }
 
