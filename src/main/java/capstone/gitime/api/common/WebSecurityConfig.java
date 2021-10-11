@@ -38,12 +38,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .httpBasic().disable()
                 .formLogin().disable()
-
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/v1/auth/**")
+                .antMatchers("/api/v1/auth/**","/test/**")
                 .permitAll()
                 .antMatchers("/api/v1/dashboard/**")
                 .hasAuthority(Authority.ROLE_SYNC_USER.toString())

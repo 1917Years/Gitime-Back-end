@@ -23,9 +23,9 @@ public class GitimeApplication {
 		return new RestTemplate();
 	}
 
-	@Bean
-	public AuditorAware<Long> auditorAware() {
-		return () ->
-				Optional.of(Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getName()));
-	}
+//	@Bean
+//	public AuditorAware<Long> auditorAware() {
+//		return () ->
+//				Optional.of(Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getName()));
+//	}
 }
