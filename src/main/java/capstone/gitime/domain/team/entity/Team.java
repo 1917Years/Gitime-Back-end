@@ -25,6 +25,8 @@ public class Team extends BaseTimeEntity {
 
     private String teamName;
 
+    private String teamDescription;
+
     // 양방향 매핑
     @OneToMany(mappedBy = "team")
     private List<MemberTeam> memberTeams = new ArrayList<>();
@@ -34,16 +36,11 @@ public class Team extends BaseTimeEntity {
     private GitRepo gitRepo;
 
     @Builder(builderMethodName = "createTeamEntity")
-    public Team(String teamName, GitRepo gitRepo, MemberTeam memberTeam) {
+    public Team(String teamName, String teamDescription, GitRepo gitRepo) {
         this.teamName = teamName;
+        this.teamDescription = teamDescription;
         this.gitRepo = gitRepo;
-        if (memberTeam != null) {
-            addMemberTeam(memberTeam);
-        }
     }
 
-    public void addMemberTeam(MemberTeam memberTeam) {
-        this.memberTeams.add(memberTeam);
-        memberTeam.updateTeam(this);
-    }
+
 }

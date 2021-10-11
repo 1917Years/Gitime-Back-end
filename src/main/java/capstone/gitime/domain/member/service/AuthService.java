@@ -11,6 +11,7 @@ import capstone.gitime.domain.member.service.dto.NaverSmsRequestDto;
 import capstone.gitime.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -38,9 +39,14 @@ public class AuthService {
     private final TokenProvider tokenProvider;
     private final RestTemplate restTemplate;
 
-    private final String ACCESS_KEY = "sdNBvbNbomlYMfUTDP7u";
-    private final String SERVICE_ID = "ncp:sms:kr:260745764616:gitime";
-    private final String SECRET_KEY = "ei5agnL6jVpUsZ6q0qlOsosouuNk6YvTBe5k60KR";
+    @Value("${sms.access-key}")
+    private String ACCESS_KEY;
+
+    @Value("${sms.service-id}")
+    private String SERVICE_ID;
+
+    @Value("${sms.secret-key}")
+    private String SECRET_KEY;
 
     @Transactional
     public void ownJoin(OwnMemberJoinRequestDto dto) {
@@ -61,6 +67,9 @@ public class AuthService {
     }
 
     public void smsSend(SmsRequestDto requestDto) throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException {
+        System.out.println("SERVICE_ID = " + SERVICE_ID);
+        System.out.println("ACCESS_KEY = " + ACCESS_KEY);
+        System.out.println("SECRET_KEY = " + SECRET_KEY);
         ResponseEntity<String> responseEntity = restTemplate.exchange("https://sens.apigw.ntruss.com/sms/v2/services/" + SERVICE_ID + "/messages",
                 HttpMethod.POST, createHttpEntity(requestDto), String.class);
     }

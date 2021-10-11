@@ -34,7 +34,12 @@ public class MemberTeam {
     public MemberTeam(TeamAuthority teamAuthority, Member member, Team team) {
         this.teamAuthority = TeamAuthority.ROLE_NOT_CHOOSE;
         this.member = member;
+        addTeam(team);
+    }
+
+    public void addTeam(Team team) {
         this.team = team;
+        team.getMemberTeams().add(this);
     }
 
     public void changeRole(TeamAuthority teamAuthority) {

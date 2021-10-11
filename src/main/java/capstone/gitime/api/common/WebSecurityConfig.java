@@ -13,6 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 
 @Configuration
@@ -42,10 +43,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/v1/auth/**","/api/v1/sync/**","/test/**")
+                .antMatchers("/api/v1/auth/**")
                 .permitAll()
                 .antMatchers("/api/v1/dashboard/**")
-//                .permitAll()
                 .hasAuthority(Authority.ROLE_SYNC_USER.toString())
                 .anyRequest().authenticated()
                 .and()

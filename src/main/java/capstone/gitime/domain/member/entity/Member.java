@@ -1,16 +1,22 @@
 package capstone.gitime.domain.member.entity;
 
+import capstone.gitime.api.controller.dto.MemberModifyRequestDto;
 import capstone.gitime.domain.common.entity.BaseTimeEntity;
 import capstone.gitime.domain.common.entity.GitRepo;
 import capstone.gitime.domain.memberTeam.entity.MemberTeam;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.springframework.util.StringUtils.*;
 
 @Entity
 @Getter
@@ -32,6 +38,8 @@ public abstract class Member extends BaseTimeEntity {
     private String phoneNumber;
 
     private LocalDate birth;
+
+    private LocalDateTime lastGitSyncAt;
 
     @OneToMany(mappedBy = "member")
     private List<GitRepo> gitRepos = new ArrayList<>();
@@ -56,5 +64,16 @@ public abstract class Member extends BaseTimeEntity {
     // Update To Authority -> ROLE_SYNC_USER
     public void updateSync() {
         this.authority = Authority.ROLE_SYNC_USER;
+        this.lastGitSyncAt = LocalDateTime.now();
+    }
+
+    public void updateInfo(MemberModifyRequestDto requestDto, PasswordEncoder passwordEncoder) {
+        if (hasText(requestDto.getNickName())) {
+            this.nickName = requestDto.getNickName();
+        } else if (hasText(requestDto.getPhoneNumber())) {
+            this.phoneNumber = requestDto.getPhoneNumber();
+        } else if (hasText(requestDto.getPassword())) {
+            this.password = passwordEncoder.encode(requestDto.getPassword());
+        }
     }
 }

@@ -18,7 +18,6 @@ import java.security.NoSuchAlgorithmException;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
-@CrossOrigin(originPatterns = "*", allowedHeaders = "*", allowCredentials = "true")
 @Slf4j
 public class AuthController {
 
