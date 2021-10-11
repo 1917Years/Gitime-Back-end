@@ -1,6 +1,7 @@
 package capstone.gitime.domain.team.entity;
 
 import capstone.gitime.domain.common.entity.BaseEntity;
+import capstone.gitime.domain.common.entity.BaseTimeEntity;
 import capstone.gitime.domain.common.entity.GitRepo;
 import capstone.gitime.domain.memberTeam.entity.MemberTeam;
 import lombok.AccessLevel;
@@ -15,7 +16,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Team extends BaseEntity {
+public class Team extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
