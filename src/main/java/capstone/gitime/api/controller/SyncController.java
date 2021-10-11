@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(originPatterns = "*", allowedHeaders = "*", allowCredentials = "true")
 @RequestMapping("/api/v1/sync")
 public class SyncController {
 
@@ -17,7 +18,8 @@ public class SyncController {
 
     @GetMapping("/github")
     @ResponseStatus(value = HttpStatus.OK)
-    public String syncGithub(@RequestParam("code") String code, @Token Long memberId) throws JsonProcessingException {
+    public String syncGithub(@RequestParam("code") String code) throws JsonProcessingException {
+        Long memberId = new Long(3L);
         syncService.getTokenByGithub(code, memberId);
         return "OK!";
     }

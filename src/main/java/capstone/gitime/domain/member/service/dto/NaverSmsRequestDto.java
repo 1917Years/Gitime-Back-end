@@ -1,4 +1,4 @@
-package capstone.gitime.api.service.dto;
+package capstone.gitime.domain.member.service.dto;
 
 
 import lombok.AllArgsConstructor;
