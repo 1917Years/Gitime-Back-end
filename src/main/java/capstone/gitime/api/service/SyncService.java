@@ -10,9 +10,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -34,14 +33,18 @@ public class SyncService {
     private final MemberRepository memberRepository;
     private final GitRepoRepository gitRepoRepository;
 
-    private final String CLIENT_ID = "a76250c81934f034f0d9";
-    private final String CLIENT_SECRET = "46f8be76a51a6511ce20a4a83c6e48ce576e775f";
+    @Value("${sync.github.client-id}")
+    private String CLIENT_ID;
+
+    @Value("${sync.github.client-secret}")
+    private String CLIENT_SECRET;
 
     @Transactional
     public void getTokenByGithub(String code, Long memberId) throws JsonProcessingException {
         Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new RuntimeException());
         if (findMember.getAuthority().equals(Authority.ROLE_SYNC_USER)) {
+            System.out.println("findMember = " + findMember);
             return;
         }
 

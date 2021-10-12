@@ -17,8 +17,7 @@ public class SyncController {
 
     @GetMapping("/github")
     @ResponseStatus(value = HttpStatus.OK)
-    public String syncGithub(@RequestParam("code") String code) throws JsonProcessingException {
-        Long memberId = new Long(3L);
+    public String syncGithub(@RequestParam("code") String code,@Token Long memberId) throws JsonProcessingException {
         syncService.getTokenByGithub(code, memberId);
         return "OK!";
     }

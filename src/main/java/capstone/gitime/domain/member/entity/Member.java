@@ -7,6 +7,7 @@ import capstone.gitime.domain.memberTeam.entity.MemberTeam;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.StringUtils;
 
@@ -23,6 +24,7 @@ import static org.springframework.util.StringUtils.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "memberType")
+@ToString(of = {"email","userName","nickName"})
 public abstract class Member extends BaseTimeEntity {
 
     @Id
