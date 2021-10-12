@@ -10,4 +10,5 @@ public class MemberModifyRequestDto {
     private String password;
     private String nickName;
     private String phoneNumber;
+
 }

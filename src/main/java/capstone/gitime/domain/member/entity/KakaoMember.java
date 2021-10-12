@@ -15,9 +15,11 @@ import java.time.LocalDate;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class KakaoMember extends Member {
 
+    private String profileImgUrl;
 
     @Builder(builderMethodName = "createdKakaoMemberEntity")
-    public KakaoMember(String email, String password, String userName, String nickName, String phoneNumber, LocalDate birth, Authority authority) {
+    public KakaoMember(String email, String password, String userName, String nickName, String phoneNumber, LocalDate birth, Authority authority, String profileImgUrl) {
         super(email, password, userName, nickName, phoneNumber, birth, authority);
+        this.profileImgUrl = profileImgUrl;
     }
 }

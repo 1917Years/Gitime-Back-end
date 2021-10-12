@@ -1,7 +1,6 @@
 package capstone.gitime.api.controller;
 
 import capstone.gitime.api.common.annotation.Token;
-import capstone.gitime.api.controller.dto.AfterLoginGithubRequestDto;
 import capstone.gitime.api.service.SyncService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;

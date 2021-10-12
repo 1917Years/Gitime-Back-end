@@ -1,5 +1,6 @@
 package capstone.gitime.api.service;
 
+import capstone.gitime.api.common.utils.RestTemplateUtils;
 import capstone.gitime.api.service.dto.GithubTokenRequestDto;
 import capstone.gitime.domain.common.entity.GitRepo;
 import capstone.gitime.domain.common.repository.GitRepoRepository;
@@ -14,11 +15,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +31,7 @@ public class SyncService {
     private final ObjectMapper objectMapper;
     private final MemberRepository memberRepository;
     private final GitRepoRepository gitRepoRepository;
+    private final RestTemplateUtils restTemplateUtils;
 
     @Value("${sync.github.client-id}")
     private String CLIENT_ID;
@@ -52,7 +52,7 @@ public class SyncService {
                         "client_id=" + CLIENT_ID +
                         "&client_secret=" + CLIENT_SECRET +
                         "&code=" + code,
-                HttpMethod.POST, createHttpEntity(null), String.class);
+                HttpMethod.POST, restTemplateUtils.createHttpEntity(null,MediaType.APPLICATION_JSON), String.class);
 
         getInfoByGithubToken(findMember,objectMapper.readValue(responseEntity.getBody(), GithubTokenRequestDto.class),memberId);
 
@@ -60,7 +60,7 @@ public class SyncService {
 
     public void getInfoByGithubToken(Member findMember, GithubTokenRequestDto requestDto, Long memberId) throws JsonProcessingException {
         ResponseEntity<String> responseEntity = restTemplate.exchange("https://api.github.com/user",
-                HttpMethod.GET, createHttpEntity(requestDto.getAccess_token()), String.class);
+                HttpMethod.GET, restTemplateUtils.createHttpEntity(requestDto.getAccess_token(),MediaType.APPLICATION_JSON), String.class);
 
         Map<String, Object> a = (Map<String, Object>) objectMapper.readValue(responseEntity.getBody(), Map.class);
         String gitName = (String) a.get("login");
@@ -69,7 +69,7 @@ public class SyncService {
 
         ResponseEntity<String> responseEntity2 = restTemplate.exchange("https://api.github.com/users/" +
                 gitName + "/repos",
-                HttpMethod.GET, createHttpEntity(null), String.class);
+                HttpMethod.GET, restTemplateUtils.createHttpEntity(null,MediaType.APPLICATION_JSON), String.class);
 
 
         List<Map<String, String>> b = objectMapper.readValue(responseEntity2.getBody(), List.class);
@@ -83,16 +83,6 @@ public class SyncService {
         gitRepoRepository.saveAll(gitRepos);
         findMember.updateSync();
 
-    }
-
-    private HttpEntity createHttpEntity(String token) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setAccept(Arrays.asList(new MediaType[]{MediaType.APPLICATION_JSON}));
-        if (StringUtils.hasText(token))
-            httpHeaders.add("Authorization", "token " + token);
-
-        HttpEntity httpEntity = new HttpEntity(httpHeaders);
-        return httpEntity;
     }
 
 }

@@ -5,6 +5,7 @@ import capstone.gitime.api.controller.dto.OwnMemberJoinRequestDto;
 import capstone.gitime.api.controller.dto.OwnMemberLoginRequestDto;
 import capstone.gitime.api.controller.dto.SmsRequestDto;
 import capstone.gitime.domain.member.service.AuthService;
+import capstone.gitime.domain.member.service.SmsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,7 @@ import java.security.NoSuchAlgorithmException;
 public class AuthController {
 
     private final AuthService authService;
+    private final SmsService joinService;
 
     @PostMapping("/join")
     @ResponseStatus(value = HttpStatus.CREATED)
@@ -37,7 +39,7 @@ public class AuthController {
 
     @PostMapping("/sms")
     public String authSms(@RequestBody SmsRequestDto requestDto) throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException {
-        authService.smsSend(requestDto);
+        joinService.smsSend(requestDto);
         return "OK!";
     }
 }
