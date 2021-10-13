@@ -43,7 +43,7 @@ public class KakaoOauthService implements OauthService<KakaoOauthTokenDto> {
     @Value("${oauth2.kakao.client-id}")
     private String CLIENT_ID;
 
-//    @Value("${oauth2.kakao.redirect-uri}")
+    @Value("${oauth2.kakao.redirect-uri}")
     private String REDIRECT_URI;
 
 
