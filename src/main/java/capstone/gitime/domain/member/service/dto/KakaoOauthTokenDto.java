@@ -1,4 +1,4 @@
-package capstone.gitime.domain.member.service.dto.kakao;
+package capstone.gitime.domain.member.service.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

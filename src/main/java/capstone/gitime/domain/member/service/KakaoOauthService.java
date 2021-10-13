@@ -1,18 +1,17 @@
 package capstone.gitime.domain.member.service;
 
-import capstone.gitime.api.common.annotation.Token;
 import capstone.gitime.api.common.token.TokenDto;
 import capstone.gitime.api.common.token.TokenProvider;
 import capstone.gitime.domain.member.entity.Authority;
 import capstone.gitime.domain.member.entity.KakaoMember;
 import capstone.gitime.domain.member.repository.MemberRepository;
-import capstone.gitime.domain.member.repository.dto.IdPasswordAuthDto;
-import capstone.gitime.domain.member.service.dto.kakao.KakaoOauthTokenDto;
+import capstone.gitime.domain.member.service.dto.KakaoOauthTokenDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,12 +19,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
 
+@Primary
 @Service("kakao")
 @RequiredArgsConstructor
 @Transactional(readOnly = true)

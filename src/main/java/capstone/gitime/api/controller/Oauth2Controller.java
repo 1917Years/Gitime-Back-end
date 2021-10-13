@@ -16,22 +16,25 @@ public class Oauth2Controller {
     @Qualifier("kakao")
     private final OauthService kakaoService;
 
+    @Qualifier("google")
+    private final OauthService googleService;
+
     @GetMapping("/kakao")
     @ResponseStatus(HttpStatus.OK)
     public TokenDto loginKakao(@RequestParam("code") String code) throws JsonProcessingException {
         return kakaoService.getToken(code);
     }
 
-    @GetMapping("/kakao")
-    @ResponseStatus(HttpStatus.OK)
-    public TokenDto loginNaver(@RequestParam("code") String code) throws JsonProcessingException {
-        return kakaoService.getToken(code);
-    }
-
-    @GetMapping("/kakao")
+//    @GetMapping("/kakao")
+//    @ResponseStatus(HttpStatus.OK)
+//    public TokenDto loginNaver(@RequestParam("code") String code) throws JsonProcessingException {
+//        return kakaoService.getToken(code);
+//    }
+//
+    @GetMapping("/google")
     @ResponseStatus(HttpStatus.OK)
     public TokenDto loginGoogle(@RequestParam("code") String code) throws JsonProcessingException {
-        return kakaoService.getToken(code);
+        return googleService.getToken(code);
     }
 
 }
