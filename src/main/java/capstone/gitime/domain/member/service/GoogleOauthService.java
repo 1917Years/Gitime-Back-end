@@ -25,7 +25,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
 
-@Service("google")
+@Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class GoogleOauthService implements OauthService<GoogleOauthTokenDto>{
@@ -64,9 +64,10 @@ public class GoogleOauthService implements OauthService<GoogleOauthTokenDto>{
 
     @Override
     public TokenDto postTokenToGetInfo(String token) throws JsonProcessingException {
-        ResponseEntity<String> responseEntity = restTemplate.exchange("https://kapi.kakao.com/v2/user/me",
+        ResponseEntity<String> responseEntity = restTemplate.exchange("https://www.googleapis.com/auth/userinfo",
                 HttpMethod.POST, createHttpEntity(token, MediaType.APPLICATION_JSON,null), String.class);
 
+        System.out.println("responseEntity.getBody() = " + responseEntity.getBody());
         Map<String, String> a = (Map<String, String>) objectMapper.readValue(responseEntity.getBody(), Map.class);
         String email = "G" + String.valueOf(a.get("id")) + String.valueOf("@google.com");
 

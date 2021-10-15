@@ -1,6 +1,7 @@
 package capstone.gitime.domain.member.entity;
 
 import capstone.gitime.api.controller.dto.MemberModifyRequestDto;
+import capstone.gitime.api.controller.dto.OauthMemberJoinRequestDto;
 import capstone.gitime.domain.common.entity.BaseTimeEntity;
 import capstone.gitime.domain.common.entity.GitRepo;
 import capstone.gitime.domain.memberTeam.entity.MemberTeam;
@@ -77,5 +78,12 @@ public abstract class Member extends BaseTimeEntity {
         } else if (hasText(requestDto.getPassword())) {
             this.password = passwordEncoder.encode(requestDto.getPassword());
         }
+    }
+
+    public void updateOauthInfo(OauthMemberJoinRequestDto requestDto) {
+        this.nickName = requestDto.getNickName();
+        this.phoneNumber = requestDto.getPhoneNumber();
+        this.birth = LocalDate.now();
+        this.userName = requestDto.getUserName();
     }
 }

@@ -1,6 +1,8 @@
 package capstone.gitime.api.controller;
 
+import capstone.gitime.api.common.annotation.Token;
 import capstone.gitime.api.common.token.TokenDto;
+import capstone.gitime.api.controller.dto.OauthMemberJoinRequestDto;
 import capstone.gitime.api.controller.dto.OwnMemberJoinRequestDto;
 import capstone.gitime.api.controller.dto.OwnMemberLoginRequestDto;
 import capstone.gitime.api.controller.dto.SmsRequestDto;
@@ -29,6 +31,12 @@ public class AuthController {
     @ResponseStatus(value = HttpStatus.CREATED)
     public String join(@RequestBody @Validated OwnMemberJoinRequestDto joinDto) {
         authService.ownJoin(joinDto);
+        return "OK!";
+    }
+
+    @PostMapping("/join/oauth")
+    public String joinOauth(@RequestBody @Validated OauthMemberJoinRequestDto joinDto, @Token Long memberId) {
+        authService.oauthJoin(joinDto,memberId);
         return "OK!";
     }
 

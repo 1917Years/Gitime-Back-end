@@ -19,6 +19,7 @@ public class OwnMemberJoinRequestDto {
     private String birth;
 
     public Member toEntity(PasswordEncoder passwordEncoder) {
+
         return OwnMember.createOwnMemberEntity()
                 .email(this.getEmail())
                 .password(passwordEncoder.encode(this.getPassword()))

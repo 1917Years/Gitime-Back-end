@@ -1,6 +1,8 @@
 package capstone.gitime.api.controller;
 
 import capstone.gitime.api.common.token.TokenDto;
+import capstone.gitime.domain.member.service.GoogleOauthService;
+import capstone.gitime.domain.member.service.KakaoOauthService;
 import capstone.gitime.domain.member.service.OauthService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
@@ -13,11 +15,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/oauth2")
 public class Oauth2Controller {
 
-    @Qualifier("kakao")
-    private final OauthService kakaoService;
+    private final KakaoOauthService kakaoService;
 
-    @Qualifier("google")
-    private final OauthService googleService;
+    private final GoogleOauthService googleService;
 
     @GetMapping("/kakao")
     @ResponseStatus(HttpStatus.OK)

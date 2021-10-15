@@ -2,9 +2,11 @@ package capstone.gitime.domain.member.service;
 
 import capstone.gitime.api.common.token.TokenDto;
 import capstone.gitime.api.common.token.TokenProvider;
+import capstone.gitime.api.controller.dto.OauthMemberJoinRequestDto;
 import capstone.gitime.api.controller.dto.OwnMemberJoinRequestDto;
 import capstone.gitime.api.controller.dto.OwnMemberLoginRequestDto;
 import capstone.gitime.api.exception.exception.member.DuplicateEmailException;
+import capstone.gitime.domain.member.entity.Member;
 import capstone.gitime.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,6 +30,13 @@ public class AuthService {
     public void ownJoin(OwnMemberJoinRequestDto dto) {
         DuplicateEmailExists(dto);
         memberRepository.save(dto.toEntity(passwordEncoder));
+    }
+
+    @Transactional
+    public void oauthJoin(OauthMemberJoinRequestDto dto, Long memberId) {
+        Member findMember = memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException());
+        findMember.updateOauthInfo(dto);
     }
 
     public TokenDto ownLogin(OwnMemberLoginRequestDto dto) {

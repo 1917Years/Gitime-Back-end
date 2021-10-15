@@ -23,8 +23,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
 
-@Primary
-@Service("kakao")
+@Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Slf4j
