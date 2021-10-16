@@ -23,6 +23,8 @@ public class MemberInfoResponseDto {
     private LocalDate birth;
     private LocalDateTime lastGitSyncAt;
 
+    private String profileImg;
+
     public MemberInfoResponseDto(Member member) {
         isSync(member);
         this.email = member.getEmail();
@@ -31,6 +33,7 @@ public class MemberInfoResponseDto {
         this.phoneNumber = member.getPhoneNumber();
         this.birth = member.getBirth();
         this.lastGitSyncAt = member.getLastGitSyncAt();
+        this.profileImg = member.getProfileImgName();
     }
 
     private void isSync(Member member) {

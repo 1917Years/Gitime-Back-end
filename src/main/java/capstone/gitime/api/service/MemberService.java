@@ -37,6 +37,13 @@ public class MemberService {
                 .orElseThrow(() -> new NotFoundMemberException("멤버 조회에 실패하였습니다. PK값 확인 불가"));
     }
 
+    @Transactional
+    public void updateProfileImg(Long memberId, String storeFileName) {
+        Member findMember = memberRepository.findById(memberId)
+                .orElseThrow(() -> new NotFoundMemberException());
+        findMember.updateProfileImg(storeFileName);
+    }
+
 
 
 }

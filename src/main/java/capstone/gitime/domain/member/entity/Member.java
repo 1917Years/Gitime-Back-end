@@ -5,6 +5,7 @@ import capstone.gitime.api.controller.dto.OauthMemberJoinRequestDto;
 import capstone.gitime.domain.common.entity.BaseTimeEntity;
 import capstone.gitime.domain.common.entity.GitRepo;
 import capstone.gitime.domain.memberTeam.entity.MemberTeam;
+import capstone.gitime.domain.uploadfile.entity.UploadFile;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -47,6 +48,8 @@ public abstract class Member extends BaseTimeEntity {
     @OneToMany(mappedBy = "member")
     private List<GitRepo> gitRepos = new ArrayList<>();
 
+    private String profileImgName;
+
     @Enumerated(value = EnumType.STRING)
     private Authority authority;
 
@@ -85,5 +88,9 @@ public abstract class Member extends BaseTimeEntity {
         this.phoneNumber = requestDto.getPhoneNumber();
         this.birth = LocalDate.now();
         this.userName = requestDto.getUserName();
+    }
+
+    public void updateProfileImg(String storeFileName) {
+        this.profileImgName = storeFileName;
     }
 }

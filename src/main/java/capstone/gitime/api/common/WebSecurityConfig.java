@@ -53,24 +53,24 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/v1/auth/**", "/api/v1/oauth2/**", "/oauth2/**")
+                .antMatchers("/api/v1/auth/**", "/api/v1/oauth2/**", "/oauth2/**","/api/v1/files/images/**")
                 .permitAll()
                 .antMatchers("/api/v1/dashboard/**")
                 .hasAuthority(Authority.ROLE_SYNC_USER.toString())
                 .anyRequest().authenticated()
                 .and()
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                .oauth2Login()
-                .authorizationEndpoint()
-                .authorizationRequestRepository(oauth2AuthorizationRequestRepository)
-                .and()
-                .redirectionEndpoint()
-                .baseUri("/oauth2/code/*")
-                .and()
-                .userInfoEndpoint()
-                .userService(customOauth2UserService)
-                .and()
-                .successHandler(oAuth2AuthenticationSuccessHandler);
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+//                .oauth2Login()
+//                .authorizationEndpoint()
+//                .authorizationRequestRepository(oauth2AuthorizationRequestRepository)
+//                .and()
+//                .redirectionEndpoint()
+//                .baseUri("/oauth2/code/*")
+//                .and()
+//                .userInfoEndpoint()
+//                .userService(customOauth2UserService)
+//                .and()
+//                .successHandler(oAuth2AuthenticationSuccessHandler);
     }
 
     @Bean
