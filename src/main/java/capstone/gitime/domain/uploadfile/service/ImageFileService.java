@@ -24,7 +24,6 @@ public class ImageFileService {
     private final UploadFileRepository uploadFileRepository;
     private final MemberRepository memberRepository;
 
-    @Value("${file.dir}")
     private String fileDir;
 
     @Transactional

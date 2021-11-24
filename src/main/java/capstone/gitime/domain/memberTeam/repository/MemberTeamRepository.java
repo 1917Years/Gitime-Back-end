@@ -12,6 +12,6 @@ public interface MemberTeamRepository extends JpaRepository<MemberTeam,Long> {
 
     @Query(value = "select mt from MemberTeam mt join fetch mt.member m join fetch mt.team t " +
             "join fetch t.gitRepo g where m.id=:memberId",
-    countQuery = "select mt from MemberTeam mt where mt.member.id=:memberId")
+    countQuery = "select mt.id from MemberTeam mt where mt.member.id=:memberId")
     Page<MemberTeam> findLazyListPageById(@Param("memberId") Long memberId, Pageable pageable);
 }

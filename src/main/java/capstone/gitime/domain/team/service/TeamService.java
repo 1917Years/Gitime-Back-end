@@ -6,14 +6,18 @@ import capstone.gitime.api.service.dto.TeamInfoResponseDto;
 import capstone.gitime.domain.common.entity.GitRepo;
 import capstone.gitime.domain.common.repository.GitRepoRepository;
 import capstone.gitime.domain.common.service.dto.GitRepoResponseDto;
+import capstone.gitime.domain.developfield.entity.DevelopField;
+import capstone.gitime.domain.developfield.repository.DevelopFieldRepository;
 import capstone.gitime.domain.member.entity.Member;
 import capstone.gitime.domain.member.repository.MemberRepository;
 import capstone.gitime.domain.memberTeam.entity.MemberTeam;
 import capstone.gitime.domain.memberTeam.entity.TeamAuthority;
 import capstone.gitime.domain.memberTeam.repository.MemberTeamRepository;
+import capstone.gitime.domain.team.entity.DevelopType;
 import capstone.gitime.domain.team.entity.Team;
 import capstone.gitime.domain.team.repository.TeamRepository;
 import capstone.gitime.domain.team.service.dto.CreateTeamRequestDto;
+import capstone.gitime.domain.team.service.dto.DevelopFieldResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,6 +36,7 @@ public class TeamService {
     private final TeamRepository teamRepository;
     private final MemberTeamRepository memberTeamRepository;
     private final GitRepoRepository gitRepoRepository;
+    private final DevelopFieldRepository developFieldRepository;
 
     public Page<TeamInfoResponseDto> getMemberTeamList(Long memberId, int page) {
         return memberTeamRepository.findLazyListPageById(memberId, PageRequest.of(page, 5))
@@ -45,9 +50,6 @@ public class TeamService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * <repoUrl>, repoName
-     */
     public void createNewTeam(CreateTeamRequestDto requestDto, Long memberId) {
         Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotFoundMemberException("멤버를 조회할수 없습니다. PK 값 불량"));
@@ -59,6 +61,7 @@ public class TeamService {
                 .teamName(requestDto.getTeamName())
                 .teamDescription(requestDto.getTeamDescription())
                 .gitRepo(findGitRepo)
+                .developType(requestDto.getDevelopType())
                 .build();
 
         teamRepository.save(newTeam);
@@ -70,5 +73,23 @@ public class TeamService {
                 .build();
 
         memberTeamRepository.save(newMemberTeam);
+    }
+
+    public List<DevelopFieldResponseDto> getAllDevelopField(Long teamId) {
+        return teamRepository.findAllById(teamId)
+                .stream().map(DevelopFieldResponseDto::of)
+                .collect(Collectors.toList());
+    }
+
+    public void createNewDevelopField(String field, Long teamId) {
+        Team findTeam = teamRepository.findById(teamId)
+                .orElseThrow(() -> new RuntimeException());
+
+        DevelopField createField = DevelopField.createDevelopField()
+                .field(field)
+                .team(findTeam)
+                .build();
+
+        developFieldRepository.save(createField);
     }
 }

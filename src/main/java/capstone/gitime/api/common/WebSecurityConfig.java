@@ -1,8 +1,5 @@
 package capstone.gitime.api.common;
 
-import capstone.gitime.api.common.oauth2.CustomOauth2UserService;
-import capstone.gitime.api.common.oauth2.OAuth2AuthenticationSuccessHandler;
-import capstone.gitime.api.common.oauth2.Oauth2AuthorizationRequestRepository;
 import capstone.gitime.api.common.token.JwtFilter;
 import capstone.gitime.domain.member.entity.Authority;
 import lombok.RequiredArgsConstructor;
@@ -27,9 +24,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtFilter jwtFilter;
-    private final CustomOauth2UserService customOauth2UserService;
-    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
-    private final Oauth2AuthorizationRequestRepository oauth2AuthorizationRequestRepository;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -55,7 +49,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/api/v1/auth/**", "/api/v1/oauth2/**", "/oauth2/**","/api/v1/files/images/**")
                 .permitAll()
-                .antMatchers("/api/v1/dashboard/**")
+                .antMatchers("/api/v1/dashboard/**","/api/v1/team/**")
                 .hasAuthority(Authority.ROLE_SYNC_USER.toString())
                 .anyRequest().authenticated()
                 .and()
