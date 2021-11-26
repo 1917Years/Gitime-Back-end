@@ -54,17 +54,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-//                .oauth2Login()
-//                .authorizationEndpoint()
-//                .authorizationRequestRepository(oauth2AuthorizationRequestRepository)
-//                .and()
-//                .redirectionEndpoint()
-//                .baseUri("/oauth2/code/*")
-//                .and()
-//                .userInfoEndpoint()
-//                .userService(customOauth2UserService)
-//                .and()
-//                .successHandler(oAuth2AuthenticationSuccessHandler);
     }
 
     @Bean

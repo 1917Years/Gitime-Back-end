@@ -1,6 +1,5 @@
 package capstone.gitime.domain.team.entity;
 
-import capstone.gitime.domain.common.entity.BaseEntity;
 import capstone.gitime.domain.common.entity.BaseTimeEntity;
 import capstone.gitime.domain.common.entity.GitRepo;
 import capstone.gitime.domain.developfield.entity.DevelopField;
@@ -42,6 +41,10 @@ public class Team extends BaseTimeEntity {
     // 양방향 매핑을 할 필요가 있을까?..
     @OneToOne(fetch = FetchType.LAZY)
     private GitRepo gitRepo;
+
+    // 양방향 매핑
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "team")
+    private List<TeamNotice> teamNotices = new ArrayList<>();
 
     @Builder(builderMethodName = "createTeamEntity")
     public Team(String teamName, String teamDescription, GitRepo gitRepo, DevelopType developType) {

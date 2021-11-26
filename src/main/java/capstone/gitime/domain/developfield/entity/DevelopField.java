@@ -15,6 +15,7 @@ public class DevelopField {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "develop_field_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
