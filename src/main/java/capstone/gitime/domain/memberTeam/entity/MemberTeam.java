@@ -4,6 +4,7 @@ import capstone.gitime.domain.developfield.entity.DevelopField;
 import capstone.gitime.domain.member.entity.Member;
 import capstone.gitime.domain.team.entity.DevelopType;
 import capstone.gitime.domain.team.entity.Team;
+import capstone.gitime.domain.team.service.dto.UpdateTeamInfoRequestDto;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -63,5 +64,9 @@ public class MemberTeam {
 
     public void updateTeamInvite(TeamInvite teamInvite) {
         this.teamInvite = teamInvite;
+    }
+
+    public void updateAll(UpdateTeamInfoRequestDto requestDto) {
+
     }
 }

@@ -26,6 +26,7 @@ import capstone.gitime.domain.team.repository.TeamRepository;
 import capstone.gitime.domain.team.service.dto.CreateTeamRequestDto;
 import capstone.gitime.domain.team.service.dto.DevelopFieldResponseDto;
 import capstone.gitime.domain.team.service.dto.TeamNoticeResponseDto;
+import capstone.gitime.domain.team.service.dto.UpdateTeamInfoRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -57,6 +58,7 @@ public class TeamService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void createNewTeam(CreateTeamRequestDto requestDto, Long memberId) {
         Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotFoundMemberException("멤버를 조회할수 없습니다. PK 값 불량"));
@@ -81,29 +83,30 @@ public class TeamService {
                 .build();
 
         memberTeamRepository.save(newMemberTeam);
+
+    }
+
+    @Transactional
+    public void updateTeamInfo(UpdateTeamInfoRequestDto requestDto, Long memberId, String teamName) {
+        MemberTeam findMemberTeam = memberAccessCheck(memberId, teamName);
+
+
     }
 
     @Transactional
     public void updateTeamNotice(TeamNoticeRequestDto requestDto, Long memberId, String teamName) {
 
-        if (memberTeamRepository.findByTeamNameAndMember(memberId, teamName)
-                .orElseThrow(() -> new NotFoundMemberTeamException())
-                .getTeamAuthority().equals(TeamAuthority.ROLE_PARENT)) {
+        memberAccessCheck(memberId, teamName);
 
-            Team findTeam = teamRepository.findTeamByName(teamName)
-                    .orElseThrow(() -> new NotFoundTeamException());
+        Team findTeam = teamRepository.findTeamByName(teamName)
+                .orElseThrow(() -> new NotFoundTeamException());
 
-            TeamNotice newTeamNotice = TeamNotice.createTeamNotice()
-                    .notice(requestDto.getNotice())
-                    .team(findTeam)
-                    .build();
+        TeamNotice newTeamNotice = TeamNotice.createTeamNotice()
+                .notice(requestDto.getNotice())
+                .team(findTeam)
+                .build();
 
-            teamNoticeRepository.save(newTeamNotice);
-
-        } else {
-            throw new NotAccessToInformation("팀에 대한 해당 권한이 주어지지 않았습니다.");
-        }
-
+        teamNoticeRepository.save(newTeamNotice);
     }
 
     public TeamNoticeResponseDto getTeamNotice(String teamName) {
@@ -131,19 +134,24 @@ public class TeamService {
         return teamRepository.findNoticeByName(teamName)
                 .orElseThrow(() -> new NotFoundTeamException())
                 .getTeamNotices()
-                .subList(0,5)
                 .stream().map(TeamNoticeResponseDto::of)
                 .collect(Collectors.toList());
     }
 
-    public List<DevelopFieldResponseDto> getAllDevelopField(Long teamId) {
-        return teamRepository.findAllById(teamId)
+    public List<DevelopFieldResponseDto> getAllDevelopField(Long memberId, String teamName) {
+        memberAccessCheck(memberId, teamName);
+
+        return teamRepository.findDevelopFieldByTeamName(teamName)
                 .stream().map(DevelopFieldResponseDto::of)
                 .collect(Collectors.toList());
     }
 
-    public void createNewDevelopField(String field, Long teamId) {
-        Team findTeam = teamRepository.findById(teamId)
+    @Transactional
+    public void createNewDevelopField(String field, Long memberId, String teamName) {
+
+        memberAccessCheck(memberId, teamName);
+
+        Team findTeam = teamRepository.findTeamByName(teamName)
                 .orElseThrow(() -> new RuntimeException());
 
         DevelopField createField = DevelopField.createDevelopField()
@@ -152,5 +160,16 @@ public class TeamService {
                 .build();
 
         developFieldRepository.save(createField);
+    }
+
+    public MemberTeam memberAccessCheck(Long memberId, String teamName) {
+        MemberTeam findMemberTeam = memberTeamRepository.findByTeamNameAndMember(memberId, teamName)
+                .orElseThrow(() -> new NotFoundMemberTeamException());
+
+        if (!findMemberTeam.getTeamAuthority().equals(TeamAuthority.ROLE_PARENT)) {
+            throw new NotAccessToInformation("해당 API에 권한이 주어지지 않았습니다.");
+        }
+
+        return findMemberTeam;
     }
 }

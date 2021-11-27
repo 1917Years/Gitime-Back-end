@@ -35,21 +35,6 @@ public class MemberTeamService {
     private final TeamRepository teamRepository;
     private final DevelopFieldRepository developFieldRepository;
 
-    @Transactional
-    public void setDevelopFieldToMember(SetDevelopFieldRequestDto requestDto, Long memberId, Long teamId) {
-        MemberTeam findMemberTeam = memberTeamRepository.findByTeamAndMember(memberId, teamId)
-                .orElseThrow(() -> new NotFoundMemberTeamException());
-
-        DevelopField findDevelopField = developFieldRepository.findByField(requestDto.getDevelopField())
-                .orElseThrow(() -> new NotFoundException());
-
-        findMemberTeam.updateDevelopField(findDevelopField);
-    }
-
-    public String getDevelopFieldFromMember(Long memberId, Long teamId) {
-        return memberTeamRepository.findFieldByTeamAndMember(memberId, teamId);
-    }
-
     public Page<TeamInfoResponseDto> getMemberTeamList(Long memberId, int page) {
         return memberTeamRepository.findLazyListPageByIdAndAccept(memberId, PageRequest.of(page, 5), TeamInvite.ACCEPT)
                 .map(TeamInfoResponseDto::new);
@@ -93,5 +78,20 @@ public class MemberTeamService {
         }
 
 
+    }
+
+    @Transactional
+    public void setDevelopFieldToMember(SetDevelopFieldRequestDto requestDto, Long memberId, Long teamId) {
+        MemberTeam findMemberTeam = memberTeamRepository.findByTeamAndMember(memberId, teamId)
+                .orElseThrow(() -> new NotFoundMemberTeamException());
+
+        DevelopField findDevelopField = developFieldRepository.findByField(requestDto.getDevelopField())
+                .orElseThrow(() -> new NotFoundException());
+
+        findMemberTeam.updateDevelopField(findDevelopField);
+    }
+
+    public String getDevelopFieldFromMember(Long memberId, Long teamId) {
+        return memberTeamRepository.findFieldByTeamAndMember(memberId, teamId);
     }
 }

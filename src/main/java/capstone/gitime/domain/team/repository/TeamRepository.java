@@ -19,4 +19,8 @@ public interface TeamRepository extends JpaRepository<Team,Long> {
 
     @Query(value = "select t from Team t where t.teamName = :teamName")
     Optional<Team> findTeamByName(@Param("teamName") String teamName);
+
+    @Query(value = "select df from DevelopField df join df.team t on t.teamName=:teamName")
+    List<DevelopField> findDevelopFieldByTeamName(@Param("teamName") String teamName);
+
 }
