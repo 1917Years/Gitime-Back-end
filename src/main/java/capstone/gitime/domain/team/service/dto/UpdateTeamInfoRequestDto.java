@@ -2,7 +2,6 @@ package capstone.gitime.domain.team.service.dto;
 
 import capstone.gitime.domain.team.entity.DevelopType;
 import lombok.Data;
-import org.springframework.util.StringUtils;
 
 
 @Data

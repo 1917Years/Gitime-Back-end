@@ -6,7 +6,6 @@ import capstone.gitime.api.exception.exception.member.NotAccessToInformation;
 import capstone.gitime.api.exception.exception.member.NotFoundMemberException;
 import capstone.gitime.api.exception.exception.memberteam.NotFoundMemberTeamException;
 import capstone.gitime.api.exception.exception.team.NotFoundTeamException;
-import capstone.gitime.api.service.dto.TeamInfoResponseDto;
 import capstone.gitime.domain.common.entity.GitRepo;
 import capstone.gitime.domain.common.repository.GitRepoRepository;
 import capstone.gitime.domain.common.service.dto.GitRepoResponseDto;
@@ -14,29 +13,22 @@ import capstone.gitime.domain.developfield.entity.DevelopField;
 import capstone.gitime.domain.developfield.repository.DevelopFieldRepository;
 import capstone.gitime.domain.member.entity.Member;
 import capstone.gitime.domain.member.repository.MemberRepository;
-import capstone.gitime.domain.memberTeam.entity.MemberTeam;
-import capstone.gitime.domain.memberTeam.entity.TeamAuthority;
-import capstone.gitime.domain.memberTeam.entity.TeamInvite;
-import capstone.gitime.domain.memberTeam.repository.MemberTeamRepository;
-import capstone.gitime.domain.team.entity.DevelopType;
+import capstone.gitime.domain.memberteam.entity.MemberTeam;
+import capstone.gitime.domain.memberteam.entity.TeamAuthority;
+import capstone.gitime.domain.memberteam.entity.TeamMemberStatus;
+import capstone.gitime.domain.memberteam.repository.MemberTeamRepository;
 import capstone.gitime.domain.team.entity.Team;
 import capstone.gitime.domain.team.entity.TeamNotice;
 import capstone.gitime.domain.team.repository.TeamNoticeRepository;
 import capstone.gitime.domain.team.repository.TeamRepository;
-import capstone.gitime.domain.team.service.dto.CreateTeamRequestDto;
-import capstone.gitime.domain.team.service.dto.DevelopFieldResponseDto;
-import capstone.gitime.domain.team.service.dto.TeamNoticeResponseDto;
-import capstone.gitime.domain.team.service.dto.UpdateTeamInfoRequestDto;
+import capstone.gitime.domain.team.service.dto.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -79,18 +71,33 @@ public class TeamService {
                 .team(newTeam)
                 .member(findMember)
                 .teamAuthority(TeamAuthority.ROLE_PARENT)
-                .teamInvite(TeamInvite.ACCEPT)
+                .teamMemberStatus(TeamMemberStatus.ACCEPT)
                 .build();
 
         memberTeamRepository.save(newMemberTeam);
 
     }
 
+    public TeamAdminInfoResponseDto getTeamInfo(Long memberId, String teamName) {
+        memberAccessCheck(memberId, teamName);
+
+        Team findTeam = teamRepository.findTeamByName(teamName)
+                .orElseThrow(() -> new NotFoundTeamException());
+
+        return TeamAdminInfoResponseDto.of(findTeam);
+    }
+
     @Transactional
     public void updateTeamInfo(UpdateTeamInfoRequestDto requestDto, Long memberId, String teamName) {
+
+        memberAccessCheck(memberId, teamName);
+
         MemberTeam findMemberTeam = memberAccessCheck(memberId, teamName);
 
+        Team findTeam = teamRepository.findTeamByName(teamName)
+                .orElseThrow(() -> new NotFoundTeamException());
 
+        findTeam.updateTeamInfo(requestDto);
     }
 
     @Transactional
@@ -130,7 +137,8 @@ public class TeamService {
         return TeamNoticeResponseDto.of(result);
     }
 
-    public List<TeamNoticeResponseDto> getAllTeamNotice(String teamName) {
+    public List<TeamNoticeResponseDto> getAllTeamNotice(Long memberId, String teamName) {
+        memberAccessCheck(memberId, teamName);
         return teamRepository.findNoticeByName(teamName)
                 .orElseThrow(() -> new NotFoundTeamException())
                 .getTeamNotices()
@@ -160,6 +168,17 @@ public class TeamService {
                 .build();
 
         developFieldRepository.save(createField);
+    }
+
+    public List<TeamMemberListInfoRequestDto> getTeamMemberListInfo(Long memberId, String teamName) {
+        memberAccessCheck(memberId, teamName);
+
+        Team findTeam = teamRepository.findTeamByName(teamName)
+                .orElseThrow(() -> new NotFoundTeamException());
+
+        return findTeam.getMemberTeams().stream()
+                .map(TeamMemberListInfoRequestDto::of)
+                .collect(Collectors.toList());
     }
 
     public MemberTeam memberAccessCheck(Long memberId, String teamName) {

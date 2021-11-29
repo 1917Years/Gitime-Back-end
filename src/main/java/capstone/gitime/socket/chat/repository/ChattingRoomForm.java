@@ -1,4 +1,4 @@
-package capstone.gitime.chat_websocket.chat.repository;
+package capstone.gitime.socket.chat.repository;
 
 import lombok.Getter;
 import lombok.Setter;

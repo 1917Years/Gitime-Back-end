@@ -4,10 +4,9 @@ import capstone.gitime.api.common.annotation.Token;
 import capstone.gitime.api.controller.dto.AddDevelopFieldRequestDto;
 import capstone.gitime.api.controller.dto.ResultResponseDto;
 import capstone.gitime.api.controller.dto.TeamNoticeRequestDto;
-import capstone.gitime.domain.memberTeam.service.MemberTeamService;
+import capstone.gitime.domain.memberteam.service.MemberTeamService;
 import capstone.gitime.domain.team.service.TeamService;
-import capstone.gitime.domain.team.service.dto.DevelopFieldResponseDto;
-import capstone.gitime.domain.team.service.dto.TeamNoticeResponseDto;
+import capstone.gitime.domain.team.service.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,8 +22,9 @@ public class TeamAdminController {
     private final MemberTeamService memberTeamService;
 
     @GetMapping("/{teamName}/notice")
-    public ResultResponseDto<TeamNoticeResponseDto> getNoticeLogList(@PathVariable("teamName") String teamName) {
-        return new ResultResponseDto<>(200, "OK!", teamService.getAllTeamNotice(teamName));
+    public ResultResponseDto<TeamNoticeResponseDto> getNoticeLogList(@PathVariable("teamName") String teamName,
+                                                                     @Token Long memberId) {
+        return new ResultResponseDto<>(200, "OK!", teamService.getAllTeamNotice(memberId, teamName));
     }
 
     @PostMapping("/{teamName}/notice")
@@ -37,6 +37,21 @@ public class TeamAdminController {
         return new ResultResponseDto<>(200, "OK!", Collections.emptyList());
     }
 
+    @GetMapping("/{teamName}/info")
+    public ResultResponseDto<TeamAdminInfoResponseDto> getTeamInfo(@PathVariable("teamName") String teamName,
+                                                                   @Token Long memberId) {
+        return new ResultResponseDto<>(200, "OK!", List.of(teamService.getTeamInfo(memberId, teamName)));
+    }
+
+    @PostMapping("/{teamName}/info")
+    public ResultResponseDto<String> postTeamInfo(@PathVariable("teamName") String teamName,
+                                                  @Token Long memberId,
+                                                  @RequestBody UpdateTeamInfoRequestDto updateTeamInfoRequestDto) {
+        teamService.updateTeamInfo(updateTeamInfoRequestDto, memberId, teamName);
+
+        return new ResultResponseDto<>(202, "OK!", Collections.emptyList());
+    }
+
     @GetMapping("/{teamName}/developfield")
     public ResultResponseDto<DevelopFieldResponseDto> getDevelopField(@PathVariable("teamName") String teamName,
                                                                       @Token Long memberId) {
@@ -46,10 +61,16 @@ public class TeamAdminController {
     @PostMapping("/{teamName}/developfield/add")
     public ResultResponseDto<String> addDevelopField(@PathVariable("teamName") String teamName,
                                                      @Token Long memberId,
-                                                     @RequestBody AddDevelopFieldRequestDto requestDto){
+                                                     @RequestBody AddDevelopFieldRequestDto requestDto) {
         teamService.createNewDevelopField(requestDto.getDevelopField(), memberId, teamName);
 
         return new ResultResponseDto<>(200, "OK!", Collections.emptyList());
+    }
+
+    @GetMapping("/{teamName}/members")
+    public ResultResponseDto<TeamMemberListInfoRequestDto> getTeamMemberList(@PathVariable("teamName") String teamName,
+                                                                             @Token Long memberId) {
+        return new ResultResponseDto<>(200, "OK!", teamService.getTeamMemberListInfo(memberId, teamName));
     }
 
 }

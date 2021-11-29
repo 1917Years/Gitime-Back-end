@@ -1,4 +1,4 @@
-package capstone.gitime.domain.memberTeam.service;
+package capstone.gitime.domain.memberteam.service;
 
 import capstone.gitime.api.controller.dto.SetDevelopFieldRequestDto;
 import capstone.gitime.api.exception.exception.global.NotFoundException;
@@ -10,10 +10,10 @@ import capstone.gitime.domain.developfield.entity.DevelopField;
 import capstone.gitime.domain.developfield.repository.DevelopFieldRepository;
 import capstone.gitime.domain.member.entity.Member;
 import capstone.gitime.domain.member.repository.MemberRepository;
-import capstone.gitime.domain.memberTeam.entity.MemberTeam;
-import capstone.gitime.domain.memberTeam.entity.TeamAuthority;
-import capstone.gitime.domain.memberTeam.entity.TeamInvite;
-import capstone.gitime.domain.memberTeam.repository.MemberTeamRepository;
+import capstone.gitime.domain.memberteam.entity.MemberTeam;
+import capstone.gitime.domain.memberteam.entity.TeamAuthority;
+import capstone.gitime.domain.memberteam.entity.TeamMemberStatus;
+import capstone.gitime.domain.memberteam.repository.MemberTeamRepository;
 import capstone.gitime.domain.team.entity.Team;
 import capstone.gitime.domain.team.repository.TeamRepository;
 import capstone.gitime.domain.team.service.dto.InviteTeamRequestDto;
@@ -36,7 +36,7 @@ public class MemberTeamService {
     private final DevelopFieldRepository developFieldRepository;
 
     public Page<TeamInfoResponseDto> getMemberTeamList(Long memberId, int page) {
-        return memberTeamRepository.findLazyListPageByIdAndAccept(memberId, PageRequest.of(page, 5), TeamInvite.ACCEPT)
+        return memberTeamRepository.findLazyListPageByIdAndAccept(memberId, PageRequest.of(page, 5), TeamMemberStatus.ACCEPT)
                 .map(TeamInfoResponseDto::new);
     }
 
@@ -51,7 +51,7 @@ public class MemberTeamService {
         MemberTeam newMemberTeam = MemberTeam.createMemberTeamEntity()
                 .team(findTeam)
                 .member(invitedMember)
-                .teamInvite(TeamInvite.WAIT)
+                .teamMemberStatus(TeamMemberStatus.WAIT)
                 .teamAuthority(TeamAuthority.ROLE_CHILD)
                 .build();
 
@@ -64,14 +64,14 @@ public class MemberTeamService {
 
             memberTeamRepository.findByTeamAndMember(memberId, teamId)
                     .orElseThrow(() -> new NotFoundMemberTeamException())
-                    .updateTeamInvite(TeamInvite.ACCEPT);
+                    .updateTeamInvite(TeamMemberStatus.ACCEPT);
 
         } else if (requestDto.getRequest().equals("DENIED")) {
 
             // DB 상에서 삭제하지 않는 이유는 나중에 팀 관리 페이지 멤버 초대쪽에서 로그로 보여주기 위함.
             memberTeamRepository.findByTeamAndMember(memberId, teamId)
                     .orElseThrow(() -> new NotFoundMemberTeamException())
-                    .updateTeamInvite(TeamInvite.DENIED);
+                    .updateTeamInvite(TeamMemberStatus.DENIED);
 
         } else {
             throw new RuntimeException();
@@ -93,5 +93,13 @@ public class MemberTeamService {
 
     public String getDevelopFieldFromMember(Long memberId, Long teamId) {
         return memberTeamRepository.findFieldByTeamAndMember(memberId, teamId);
+    }
+
+    @Transactional
+    public void deleteMemberTeam(Long memberId, String teamName) {
+        MemberTeam findMemberTeam = memberTeamRepository.findByTeamNameAndMember(memberId, teamName)
+                .orElseThrow(() -> new NotFoundMemberTeamException());
+
+        memberTeamRepository.delete(findMemberTeam);
     }
 }

@@ -3,15 +3,20 @@ package capstone.gitime.domain.team.entity;
 import capstone.gitime.domain.common.entity.BaseTimeEntity;
 import capstone.gitime.domain.common.entity.GitRepo;
 import capstone.gitime.domain.developfield.entity.DevelopField;
-import capstone.gitime.domain.memberTeam.entity.MemberTeam;
+import capstone.gitime.domain.memberteam.entity.MemberTeam;
+import capstone.gitime.domain.team.service.dto.UpdateTeamInfoRequestDto;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.util.StringUtils;
+import org.yaml.snakeyaml.util.EnumUtils;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.springframework.util.StringUtils.hasText;
 
 @Entity
 @Getter
@@ -52,6 +57,20 @@ public class Team extends BaseTimeEntity {
         this.teamName = teamName;
         this.teamDescription = teamDescription;
         this.gitRepo = gitRepo;
+    }
+
+    public void updateTeamInfo(UpdateTeamInfoRequestDto requestDto) {
+        if (hasText(requestDto.getTeamName())) {
+            this.teamName = requestDto.getTeamName();
+        }
+
+        if (hasText(requestDto.getTeamDescription())) {
+            this.teamDescription = requestDto.getTeamDescription();
+        }
+
+        if (requestDto.getDevelopType() != null) {
+            this.developType = requestDto.getDevelopType();
+        }
     }
 
 }

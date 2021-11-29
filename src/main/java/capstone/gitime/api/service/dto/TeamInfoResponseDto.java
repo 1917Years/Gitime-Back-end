@@ -1,6 +1,6 @@
 package capstone.gitime.api.service.dto;
 
-import capstone.gitime.domain.memberTeam.entity.MemberTeam;
+import capstone.gitime.domain.memberteam.entity.MemberTeam;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

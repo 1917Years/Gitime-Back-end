@@ -27,6 +27,7 @@ public class MemberService {
         return new MemberInfoResponseDto(findMember);
     }
 
+    @Transactional
     public void modifyMemberInfo(Long memberId, MemberModifyRequestDto requestDto) {
         Member findMember = getMember(memberId);
         findMember.updateInfo(requestDto,passwordEncoder);

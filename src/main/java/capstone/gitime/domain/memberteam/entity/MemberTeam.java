@@ -1,10 +1,8 @@
-package capstone.gitime.domain.memberTeam.entity;
+package capstone.gitime.domain.memberteam.entity;
 
 import capstone.gitime.domain.developfield.entity.DevelopField;
 import capstone.gitime.domain.member.entity.Member;
-import capstone.gitime.domain.team.entity.DevelopType;
 import capstone.gitime.domain.team.entity.Team;
-import capstone.gitime.domain.team.service.dto.UpdateTeamInfoRequestDto;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,7 +24,7 @@ public class MemberTeam {
     private TeamAuthority teamAuthority;
 
     @Enumerated(value = EnumType.STRING)
-    private TeamInvite teamInvite;
+    private TeamMemberStatus teamMemberStatus;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "develop_field_id", foreignKey = @ForeignKey(name = "member_team_develop_field_fk"))
@@ -41,11 +39,11 @@ public class MemberTeam {
     private Team team;
 
     @Builder(builderMethodName = "createMemberTeamEntity")
-    public MemberTeam(TeamAuthority teamAuthority, Member member, Team team, TeamInvite teamInvite) {
+    public MemberTeam(TeamAuthority teamAuthority, Member member, Team team, TeamMemberStatus teamMemberStatus) {
         this.developField = null;
         this.teamAuthority = teamAuthority;
         this.member = member;
-        this.teamInvite = teamInvite;
+        this.teamMemberStatus = teamMemberStatus;
         addTeam(team);
     }
 
@@ -62,11 +60,12 @@ public class MemberTeam {
         this.developField = developField;
     }
 
-    public void updateTeamInvite(TeamInvite teamInvite) {
-        this.teamInvite = teamInvite;
+    public void updateTeamInvite(TeamMemberStatus teamMemberStatus) {
+        this.teamMemberStatus = teamMemberStatus;
     }
 
-    public void updateAll(UpdateTeamInfoRequestDto requestDto) {
-
+    public void deleteMemberTeam() {
+        this.teamMemberStatus = TeamMemberStatus.DELETE;
     }
+
 }

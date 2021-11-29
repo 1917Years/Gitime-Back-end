@@ -1,4 +1,4 @@
-package capstone.gitime.chat_websocket.chat.configuration;
+package capstone.gitime.socket.chat.configuration;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

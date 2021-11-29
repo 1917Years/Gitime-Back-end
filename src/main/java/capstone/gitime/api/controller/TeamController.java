@@ -4,7 +4,7 @@ import capstone.gitime.api.common.annotation.Token;
 import capstone.gitime.api.controller.dto.ResultResponseDto;
 import capstone.gitime.api.service.dto.TeamInfoResponseDto;
 import capstone.gitime.domain.common.service.dto.GitRepoResponseDto;
-import capstone.gitime.domain.memberTeam.service.MemberTeamService;
+import capstone.gitime.domain.memberteam.service.MemberTeamService;
 import capstone.gitime.domain.team.service.TeamService;
 import capstone.gitime.domain.team.service.dto.CreateTeamRequestDto;
 import capstone.gitime.domain.team.service.dto.TeamNoticeResponseDto;

@@ -4,14 +4,12 @@ import capstone.gitime.api.controller.dto.MemberModifyRequestDto;
 import capstone.gitime.api.controller.dto.OauthMemberJoinRequestDto;
 import capstone.gitime.domain.common.entity.BaseTimeEntity;
 import capstone.gitime.domain.common.entity.GitRepo;
-import capstone.gitime.domain.memberTeam.entity.MemberTeam;
-import capstone.gitime.domain.uploadfile.entity.UploadFile;
+import capstone.gitime.domain.memberteam.entity.MemberTeam;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
 import java.time.LocalDate;

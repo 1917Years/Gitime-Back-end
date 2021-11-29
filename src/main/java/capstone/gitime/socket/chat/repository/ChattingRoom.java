@@ -1,4 +1,4 @@
-package capstone.gitime.chat_websocket.chat.repository;
+package capstone.gitime.socket.chat.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
