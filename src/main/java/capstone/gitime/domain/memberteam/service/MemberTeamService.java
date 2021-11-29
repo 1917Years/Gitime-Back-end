@@ -15,6 +15,7 @@ import capstone.gitime.domain.memberteam.entity.TeamAuthority;
 import capstone.gitime.domain.memberteam.entity.TeamMemberStatus;
 import capstone.gitime.domain.memberteam.repository.MemberTeamRepository;
 import capstone.gitime.domain.team.entity.Team;
+import capstone.gitime.domain.team.entity.TeamStatus;
 import capstone.gitime.domain.team.repository.TeamRepository;
 import capstone.gitime.domain.team.service.dto.InviteTeamRequestDto;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +37,7 @@ public class MemberTeamService {
     private final DevelopFieldRepository developFieldRepository;
 
     public Page<TeamInfoResponseDto> getMemberTeamList(Long memberId, int page) {
-        return memberTeamRepository.findLazyListPageByIdAndAccept(memberId, PageRequest.of(page, 5), TeamMemberStatus.ACCEPT)
+        return memberTeamRepository.findLazyListPageByIdAndAccept(memberId, PageRequest.of(page, 5), TeamMemberStatus.ACCEPT, TeamStatus.ACTIVE)
                 .map(TeamInfoResponseDto::new);
     }
 
@@ -81,11 +82,11 @@ public class MemberTeamService {
     }
 
     @Transactional
-    public void setDevelopFieldToMember(SetDevelopFieldRequestDto requestDto, Long memberId, Long teamId) {
-        MemberTeam findMemberTeam = memberTeamRepository.findByTeamAndMember(memberId, teamId)
+    public void setDevelopFieldToMember(SetDevelopFieldRequestDto requestDto, Long memberId, String teamName) {
+        MemberTeam findMemberTeam = memberTeamRepository.findByTeamNameAndMember(memberId, teamName)
                 .orElseThrow(() -> new NotFoundMemberTeamException());
 
-        DevelopField findDevelopField = developFieldRepository.findByField(requestDto.getDevelopField())
+        DevelopField findDevelopField = developFieldRepository.findByField(requestDto.getDevelopField(), teamName)
                 .orElseThrow(() -> new NotFoundException());
 
         findMemberTeam.updateDevelopField(findDevelopField);

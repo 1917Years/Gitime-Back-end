@@ -2,6 +2,7 @@ package capstone.gitime.domain.memberteam.repository;
 
 import capstone.gitime.domain.memberteam.entity.MemberTeam;
 import capstone.gitime.domain.memberteam.entity.TeamMemberStatus;
+import capstone.gitime.domain.team.entity.TeamStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,9 +15,9 @@ import java.util.Optional;
 public interface MemberTeamRepository extends JpaRepository<MemberTeam,Long> {
 
     @Query(value = "select mt from MemberTeam mt join fetch mt.member m join fetch mt.team t " +
-            "join fetch t.gitRepo g where m.id=:memberId and mt.teamInvite = :teamInvite",
+            "join fetch t.gitRepo g where m.id=:memberId and mt.teamMemberStatus = :teamMemberStatus and t.teamStatus=:teamStatus",
             countQuery = "select mt.id from MemberTeam mt where mt.member.id=:memberId")
-    Page<MemberTeam> findLazyListPageByIdAndAccept(@Param("memberId") Long memberId, Pageable pageable, @Param("teamMemberStatus") TeamMemberStatus teamMemberStatus);
+    Page<MemberTeam> findLazyListPageByIdAndAccept(@Param("memberId") Long memberId, Pageable pageable, @Param("teamMemberStatus") TeamMemberStatus teamMemberStatus, @Param("teamStatus") TeamStatus teamStatus);
 
     @Query(value = "select mt from MemberTeam mt where mt.member = :memberId and mt.team = :teamId")
     Optional<MemberTeam> findByTeamAndMember(@Param("memberId") Long memberId, @Param("teamId") Long teamId);

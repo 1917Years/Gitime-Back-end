@@ -11,7 +11,8 @@ import java.util.Optional;
 
 public interface GitRepoRepository extends JpaRepository<GitRepo, Long> {
 
-    Optional<GitRepo> findByUrl(String url);
+    @Query(value = "select gr from GitRepo gr join gr.member m on m.id=:memberId where gr.url=:url")
+    Optional<GitRepo> findByUrl(@Param("url") String url, @Param("memberId") Long memberId);
 
     @Query(value = "select gr from GitRepo gr where gr.member.id=:memberId")
     List<GitRepo> findListBy(@Param("memberId") Long memberId);

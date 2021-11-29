@@ -2,9 +2,9 @@ package capstone.gitime.api.controller;
 
 import capstone.gitime.api.common.annotation.Token;
 import capstone.gitime.api.controller.dto.AddDevelopFieldRequestDto;
+import capstone.gitime.api.controller.dto.DeleteDevelopFieldRequestDto;
 import capstone.gitime.api.controller.dto.ResultResponseDto;
 import capstone.gitime.api.controller.dto.TeamNoticeRequestDto;
-import capstone.gitime.domain.memberteam.service.MemberTeamService;
 import capstone.gitime.domain.team.service.TeamService;
 import capstone.gitime.domain.team.service.dto.*;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,6 @@ import java.util.List;
 public class TeamAdminController {
 
     private final TeamService teamService;
-    private final MemberTeamService memberTeamService;
 
     @GetMapping("/{teamName}/notice")
     public ResultResponseDto<TeamNoticeResponseDto> getNoticeLogList(@PathVariable("teamName") String teamName,
@@ -65,6 +64,15 @@ public class TeamAdminController {
         teamService.createNewDevelopField(requestDto.getDevelopField(), memberId, teamName);
 
         return new ResultResponseDto<>(200, "OK!", Collections.emptyList());
+    }
+
+    @PostMapping("/{teamName}/developfield/delete")
+    public ResultResponseDto<String> deleteDevelopField(@PathVariable("teamName") String teamName,
+                                                        @Token Long memberId,
+                                                        @RequestBody DeleteDevelopFieldRequestDto requestDto) {
+        teamService.removeDevelopField(requestDto, memberId, teamName);
+
+        return new ResultResponseDto<>(202, "OK!", Collections.emptyList());
     }
 
     @GetMapping("/{teamName}/members")

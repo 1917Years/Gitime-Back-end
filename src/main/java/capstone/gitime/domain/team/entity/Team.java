@@ -9,8 +9,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.util.StringUtils;
-import org.yaml.snakeyaml.util.EnumUtils;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -35,6 +33,9 @@ public class Team extends BaseTimeEntity {
     @Enumerated(value = EnumType.STRING)
     private DevelopType developType;
 
+    @Enumerated(value = EnumType.STRING)
+    private TeamStatus teamStatus;
+
     // 양방향 매핑
     @OneToMany(mappedBy = "team")
     private List<MemberTeam> memberTeams = new ArrayList<>();
@@ -52,11 +53,12 @@ public class Team extends BaseTimeEntity {
     private List<TeamNotice> teamNotices = new ArrayList<>();
 
     @Builder(builderMethodName = "createTeamEntity")
-    public Team(String teamName, String teamDescription, GitRepo gitRepo, DevelopType developType) {
+    public Team(String teamName, String teamDescription, GitRepo gitRepo, DevelopType developType, TeamStatus teamStatus) {
         this.developType = developType;
         this.teamName = teamName;
         this.teamDescription = teamDescription;
         this.gitRepo = gitRepo;
+        this.teamStatus = teamStatus;
     }
 
     public void updateTeamInfo(UpdateTeamInfoRequestDto requestDto) {
@@ -71,6 +73,10 @@ public class Team extends BaseTimeEntity {
         if (requestDto.getDevelopType() != null) {
             this.developType = requestDto.getDevelopType();
         }
+    }
+
+    public void updateTeamStatus(TeamStatus teamStatus) {
+        this.teamStatus = teamStatus;
     }
 
 }

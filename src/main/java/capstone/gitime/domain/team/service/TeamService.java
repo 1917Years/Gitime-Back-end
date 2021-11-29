@@ -1,7 +1,9 @@
 package capstone.gitime.domain.team.service;
 
 
+import capstone.gitime.api.controller.dto.DeleteDevelopFieldRequestDto;
 import capstone.gitime.api.controller.dto.TeamNoticeRequestDto;
+import capstone.gitime.api.exception.exception.global.NotFoundException;
 import capstone.gitime.api.exception.exception.member.NotAccessToInformation;
 import capstone.gitime.api.exception.exception.member.NotFoundMemberException;
 import capstone.gitime.api.exception.exception.memberteam.NotFoundMemberTeamException;
@@ -19,14 +21,18 @@ import capstone.gitime.domain.memberteam.entity.TeamMemberStatus;
 import capstone.gitime.domain.memberteam.repository.MemberTeamRepository;
 import capstone.gitime.domain.team.entity.Team;
 import capstone.gitime.domain.team.entity.TeamNotice;
+import capstone.gitime.domain.team.entity.TeamStatus;
 import capstone.gitime.domain.team.repository.TeamNoticeRepository;
 import capstone.gitime.domain.team.repository.TeamRepository;
 import capstone.gitime.domain.team.service.dto.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -55,7 +61,7 @@ public class TeamService {
         Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotFoundMemberException("멤버를 조회할수 없습니다. PK 값 불량"));
 
-        GitRepo findGitRepo = gitRepoRepository.findByUrl(requestDto.getGitRepoUrl())
+        GitRepo findGitRepo = gitRepoRepository.findByUrl(requestDto.getGitRepoUrl(), memberId)
                 .orElseThrow(() -> new RuntimeException());
 
         Team newTeam = Team.createTeamEntity()
@@ -63,6 +69,7 @@ public class TeamService {
                 .teamDescription(requestDto.getTeamDescription())
                 .gitRepo(findGitRepo)
                 .developType(requestDto.getDevelopType())
+                .teamStatus(TeamStatus.ACTIVE)
                 .build();
 
         teamRepository.save(newTeam);
@@ -91,8 +98,6 @@ public class TeamService {
     public void updateTeamInfo(UpdateTeamInfoRequestDto requestDto, Long memberId, String teamName) {
 
         memberAccessCheck(memberId, teamName);
-
-        MemberTeam findMemberTeam = memberAccessCheck(memberId, teamName);
 
         Team findTeam = teamRepository.findTeamByName(teamName)
                 .orElseThrow(() -> new NotFoundTeamException());
@@ -139,11 +144,16 @@ public class TeamService {
 
     public List<TeamNoticeResponseDto> getAllTeamNotice(Long memberId, String teamName) {
         memberAccessCheck(memberId, teamName);
-        return teamRepository.findNoticeByName(teamName)
+
+        List<TeamNoticeResponseDto> result = teamRepository.findNoticeByName(teamName)
                 .orElseThrow(() -> new NotFoundTeamException())
                 .getTeamNotices()
                 .stream().map(TeamNoticeResponseDto::of)
                 .collect(Collectors.toList());
+
+        Collections.reverse(result);
+
+        return result;
     }
 
     public List<DevelopFieldResponseDto> getAllDevelopField(Long memberId, String teamName) {
@@ -170,6 +180,16 @@ public class TeamService {
         developFieldRepository.save(createField);
     }
 
+    @Transactional
+    public void removeDevelopField(DeleteDevelopFieldRequestDto requestDto, Long memberId, String teamName) {
+        memberAccessCheck(memberId, teamName);
+
+        DevelopField findDevelopField = developFieldRepository.findByField(requestDto.getDevelopField(), teamName)
+                .orElseThrow(() -> new NotFoundException());
+
+        developFieldRepository.delete(findDevelopField);
+    }
+
     public List<TeamMemberListInfoRequestDto> getTeamMemberListInfo(Long memberId, String teamName) {
         memberAccessCheck(memberId, teamName);
 
@@ -179,6 +199,17 @@ public class TeamService {
         return findTeam.getMemberTeams().stream()
                 .map(TeamMemberListInfoRequestDto::of)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void deleteTeam(Long memberId, String teamName) {
+        memberAccessCheck(memberId, teamName);
+
+        Team findTeam = teamRepository.findTeamByName(teamName)
+                .orElseThrow(() -> new NotFoundTeamException());
+
+        findTeam.updateTeamStatus(TeamStatus.DIE);
+
     }
 
     public MemberTeam memberAccessCheck(Long memberId, String teamName) {
