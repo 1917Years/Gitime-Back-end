@@ -28,6 +28,8 @@ public class Team extends BaseTimeEntity {
 
     private String teamName;
 
+    private String chatUUID;
+
     private String teamDescription;
 
     @Enumerated(value = EnumType.STRING)
@@ -53,12 +55,13 @@ public class Team extends BaseTimeEntity {
     private List<TeamNotice> teamNotices = new ArrayList<>();
 
     @Builder(builderMethodName = "createTeamEntity")
-    public Team(String teamName, String teamDescription, GitRepo gitRepo, DevelopType developType, TeamStatus teamStatus) {
+    public Team(String teamName, String chatUUID, String teamDescription, GitRepo gitRepo, DevelopType developType, TeamStatus teamStatus) {
         this.developType = developType;
         this.teamName = teamName;
         this.teamDescription = teamDescription;
         this.gitRepo = gitRepo;
         this.teamStatus = teamStatus;
+        this.chatUUID = chatUUID;
     }
 
     public void updateTeamInfo(UpdateTeamInfoRequestDto requestDto) {

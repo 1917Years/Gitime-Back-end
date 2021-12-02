@@ -26,6 +26,7 @@ import capstone.gitime.domain.team.entity.TeamStatus;
 import capstone.gitime.domain.team.repository.TeamNoticeRepository;
 import capstone.gitime.domain.team.repository.TeamRepository;
 import capstone.gitime.domain.team.service.dto.*;
+import capstone.gitime.socket.chat.repository.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -49,6 +50,7 @@ public class TeamService {
     private final GitRepoRepository gitRepoRepository;
     private final DevelopFieldRepository developFieldRepository;
     private final TeamNoticeRepository teamNoticeRepository;
+    private final ChatRoomRepository chatRoomRepository;
 
     public List<GitRepoResponseDto> getRepoList(Long memberId) {
         return gitRepoRepository.findListBy(memberId)
@@ -71,12 +73,16 @@ public class TeamService {
         GitRepo findGitRepo = gitRepoRepository.findByUrl(requestDto.getGitRepoUrl(), memberId)
                 .orElseThrow(() -> new RuntimeException());
 
+        //채팅방 생성
+        String chatUUID = chatRoomRepository.createChatRoom(requestDto.getTeamName());
+
         Team newTeam = Team.createTeamEntity()
                 .teamName(requestDto.getTeamName())
                 .teamDescription(requestDto.getTeamDescription())
                 .gitRepo(findGitRepo)
                 .developType(requestDto.getDevelopType())
                 .teamStatus(TeamStatus.ACTIVE)
+                .chatUUID(chatUUID)
                 .build();
 
         teamRepository.save(newTeam);
@@ -89,6 +95,8 @@ public class TeamService {
                 .build();
 
         memberTeamRepository.save(newMemberTeam);
+
+
 
     }
 

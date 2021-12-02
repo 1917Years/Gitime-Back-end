@@ -24,10 +24,11 @@ public class ChatRoomRepository {
         return chatRoomMap.get(id);
     }
 
-    public ChattingRoom createChatRoom(String name){
+    public String createChatRoom(String name){
         ChattingRoom chatRoom = ChattingRoom.create(name);
         chatRoomMap.put(chatRoom.getRoomId(), chatRoom);
-        return chatRoom;
+        String chatUUID = chatRoom.getRoomId();
+        return chatUUID;
 
     }
 
