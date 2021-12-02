@@ -26,17 +26,13 @@ import capstone.gitime.domain.team.entity.TeamStatus;
 import capstone.gitime.domain.team.repository.TeamNoticeRepository;
 import capstone.gitime.domain.team.repository.TeamRepository;
 import capstone.gitime.domain.team.service.dto.*;
-import capstone.gitime.socket.chat.repository.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,7 +46,6 @@ public class TeamService {
     private final GitRepoRepository gitRepoRepository;
     private final DevelopFieldRepository developFieldRepository;
     private final TeamNoticeRepository teamNoticeRepository;
-    private final ChatRoomRepository chatRoomRepository;
 
     public List<GitRepoResponseDto> getRepoList(Long memberId) {
         return gitRepoRepository.findListBy(memberId)
@@ -74,7 +69,6 @@ public class TeamService {
                 .orElseThrow(() -> new RuntimeException());
 
         //채팅방 생성
-        String chatUUID = chatRoomRepository.createChatRoom(requestDto.getTeamName());
 
         Team newTeam = Team.createTeamEntity()
                 .teamName(requestDto.getTeamName())
@@ -82,7 +76,7 @@ public class TeamService {
                 .gitRepo(findGitRepo)
                 .developType(requestDto.getDevelopType())
                 .teamStatus(TeamStatus.ACTIVE)
-                .chatUUID(chatUUID)
+                .chatUUID("Asdasd")
                 .build();
 
         teamRepository.save(newTeam);

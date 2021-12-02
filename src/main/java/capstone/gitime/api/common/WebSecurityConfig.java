@@ -49,7 +49,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/api/v1/auth/**", "/api/v1/oauth2/**", "/oauth2/**","/api/v1/files/images/**")
                 .permitAll()
-                .antMatchers("/api/v1/dashboard/**","/api/v1/team/**","/api/v1/teams/admin/**")
+                .antMatchers("/api/v1/dashboard/","/api/v1/team/","/api/v1/teams/admin/","/api/v1/socket/")
                 .hasAuthority(Authority.ROLE_SYNC_USER.toString())
                 .anyRequest().authenticated()
                 .and()
