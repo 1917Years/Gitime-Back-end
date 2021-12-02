@@ -7,6 +7,7 @@ import capstone.gitime.api.exception.exception.global.NotFoundException;
 import capstone.gitime.api.exception.exception.member.NotAccessToInformation;
 import capstone.gitime.api.exception.exception.member.NotFoundMemberException;
 import capstone.gitime.api.exception.exception.memberteam.NotFoundMemberTeamException;
+import capstone.gitime.api.exception.exception.team.DuplicateTeamNameException;
 import capstone.gitime.api.exception.exception.team.NotFoundTeamException;
 import capstone.gitime.domain.common.entity.GitRepo;
 import capstone.gitime.domain.common.repository.GitRepoRepository;
@@ -58,6 +59,12 @@ public class TeamService {
 
     @Transactional
     public void createNewTeam(CreateTeamRequestDto requestDto, Long memberId) {
+
+        if (teamRepository.findTeamByName(requestDto.getTeamName())
+                .isPresent()) {
+            throw new DuplicateTeamNameException("팀 명이 중복됩니다.");
+        }
+
         Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotFoundMemberException("멤버를 조회할수 없습니다. PK 값 불량"));
 

@@ -20,6 +20,13 @@ public class TeamAdminController {
 
     private final TeamService teamService;
 
+    @DeleteMapping("/{teamName}/team/delete")
+    public ResultResponseDto<String> deleteTeam(@PathVariable("teamName") String teamName,
+                                                @Token Long memberId) {
+        teamService.deleteTeam(memberId, teamName);
+        return new ResultResponseDto<>(200, "OK!", Collections.emptyList());
+    }
+
     @GetMapping("/{teamName}/notice")
     public ResultResponseDto<TeamNoticeResponseDto> getNoticeLogList(@PathVariable("teamName") String teamName,
                                                                      @Token Long memberId) {

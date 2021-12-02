@@ -15,9 +15,12 @@ import java.util.Optional;
 public interface MemberTeamRepository extends JpaRepository<MemberTeam,Long> {
 
     @Query(value = "select mt from MemberTeam mt join fetch mt.member m join fetch mt.team t " +
-            "join fetch t.gitRepo g where m.id=:memberId and mt.teamMemberStatus = :teamMemberStatus and t.teamStatus=:teamStatus",
+            "join fetch t.gitRepo g where m.id=:memberId and mt.teamMemberStatus = :teamMemberStatus and " +
+            "t.teamStatus=:teamStatus",
             countQuery = "select mt.id from MemberTeam mt where mt.member.id=:memberId")
-    Page<MemberTeam> findLazyListPageByIdAndAccept(@Param("memberId") Long memberId, Pageable pageable, @Param("teamMemberStatus") TeamMemberStatus teamMemberStatus, @Param("teamStatus") TeamStatus teamStatus);
+    Page<MemberTeam> findLazyListPageByIdAndAccept(@Param("memberId") Long memberId, Pageable pageable,
+                                                   @Param("teamMemberStatus") TeamMemberStatus teamMemberStatus,
+                                                   @Param("teamStatus") TeamStatus teamStatus);
 
     @Query(value = "select mt from MemberTeam mt where mt.member = :memberId and mt.team = :teamId")
     Optional<MemberTeam> findByTeamAndMember(@Param("memberId") Long memberId, @Param("teamId") Long teamId);
