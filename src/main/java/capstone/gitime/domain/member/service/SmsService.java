@@ -37,9 +37,6 @@ public class SmsService {
 
 
     public void smsSend(SmsRequestDto requestDto) throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException {
-        System.out.println("SERVICE_ID = " + SERVICE_ID);
-        System.out.println("ACCESS_KEY = " + ACCESS_KEY);
-        System.out.println("SECRET_KEY = " + SECRET_KEY);
         ResponseEntity<String> responseEntity = restTemplate.exchange("https://sens.apigw.ntruss.com/sms/v2/services/" + SERVICE_ID + "/messages",
                 HttpMethod.POST, createHttpEntity(requestDto), String.class);
     }
