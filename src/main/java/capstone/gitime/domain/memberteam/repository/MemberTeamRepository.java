@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.parameters.P;
 
 import java.util.Optional;
 
@@ -27,6 +28,9 @@ public interface MemberTeamRepository extends JpaRepository<MemberTeam,Long> {
 
     @Query(value = "select mt from MemberTeam mt join mt.team t where mt.member.id = :memberId and t.teamName = :teamName")
     Optional<MemberTeam> findByTeamNameAndMember(@Param("memberId") Long memberId, @Param("teamName") String teamName);
+
+    @Query(value = "select mt from MemberTeam mt join mt.team t join fetch mt.developField df where mt.member.id = :memberId and t.teamName = :teamName")
+    Optional<MemberTeam> findFetchDevelopFieldByTeamNameAndMember(@Param("memberId") Long memberId, @Param("teamName") String teamName);
 
     @Query(value = "select df.field from MemberTeam mt join mt.developField df where mt.member = :memberId and mt.team = :teamId")
     String findFieldByTeamAndMember(@Param("memberId") Long memberId, @Param("teamId") Long teamId);

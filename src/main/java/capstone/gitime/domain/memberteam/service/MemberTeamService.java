@@ -1,6 +1,7 @@
 package capstone.gitime.domain.memberteam.service;
 
 import capstone.gitime.api.controller.dto.SetDevelopFieldRequestDto;
+import capstone.gitime.api.exception.exception.global.NotAccessException;
 import capstone.gitime.api.exception.exception.global.NotFoundException;
 import capstone.gitime.api.exception.exception.member.NotFoundMemberException;
 import capstone.gitime.api.exception.exception.memberteam.NotFoundMemberTeamException;
@@ -102,5 +103,14 @@ public class MemberTeamService {
                 .orElseThrow(() -> new NotFoundMemberTeamException());
 
         memberTeamRepository.delete(findMemberTeam);
+    }
+
+    public void memberAccessToTeam(Long memberId, String teamName) {
+        MemberTeam findMemberTeam = memberTeamRepository.findByTeamNameAndMember(memberId, teamName)
+                .orElse(null);
+
+        if (findMemberTeam == null) {
+            throw new NotAccessException();
+        }
     }
 }
