@@ -27,15 +27,12 @@ import capstone.gitime.domain.team.repository.TeamNoticeRepository;
 import capstone.gitime.domain.team.repository.TeamRepository;
 import capstone.gitime.domain.team.service.dto.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -71,12 +68,15 @@ public class TeamService {
         GitRepo findGitRepo = gitRepoRepository.findByUrl(requestDto.getGitRepoUrl(), memberId)
                 .orElseThrow(() -> new RuntimeException());
 
+        //채팅방 생성
+
         Team newTeam = Team.createTeamEntity()
                 .teamName(requestDto.getTeamName())
                 .teamDescription(requestDto.getTeamDescription())
                 .gitRepo(findGitRepo)
                 .developType(requestDto.getDevelopType())
                 .teamStatus(TeamStatus.ACTIVE)
+                .chatUUID("Asdasd")
                 .build();
 
         teamRepository.save(newTeam);
@@ -89,6 +89,8 @@ public class TeamService {
                 .build();
 
         memberTeamRepository.save(newMemberTeam);
+
+
 
     }
 
