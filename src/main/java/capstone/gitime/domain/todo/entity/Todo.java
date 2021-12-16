@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -30,10 +31,20 @@ public class Todo extends BaseTimeEntity {
 
     private String working;
 
+    private Boolean isFinish;
+
+    private LocalDate untilDate;
+
     @Builder(builderMethodName = "createTodo")
-    public Todo(Team team, DevelopField developField, String working) {
+    public Todo(Team team, DevelopField developField, String working, Boolean isFinish, LocalDate untilDate) {
         this.team = team;
         this.developField = developField;
         this.working = working;
+        this.isFinish = isFinish;
+        this.untilDate = untilDate;
+    }
+
+    public void updateTodoFinish() {
+        this.isFinish = !isFinish;
     }
 }
