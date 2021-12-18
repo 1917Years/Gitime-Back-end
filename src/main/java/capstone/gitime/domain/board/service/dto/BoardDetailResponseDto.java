@@ -5,10 +5,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
-public class BoardListResponseDto {
+public class BoardDetailResponseDto {
 
     private String title;
     private String content;
@@ -16,17 +18,17 @@ public class BoardListResponseDto {
     private String writerField;
     private LocalDateTime writeTime;
     private Integer likeCount;
-    private Integer commentCount;
+    private List<CommentListResponseDto> comments;
 
-    public static BoardListResponseDto of(Board board) {
-        return new BoardListResponseDto(
+    public static BoardDetailResponseDto of(Board board) {
+        return new BoardDetailResponseDto(
                 board.getTitle(),
                 board.getContent(),
                 board.getMemberTeam().getMember().getUserName(),
                 board.getMemberTeam().getDevelopField().getField(),
                 board.getCreatedAt(),
                 board.getLikeCount(),
-                board.getCommentList().size());
+                board.getCommentList().stream().map(CommentListResponseDto::of)
+                        .collect(Collectors.toList()));
     }
-
 }

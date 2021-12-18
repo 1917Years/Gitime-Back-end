@@ -7,6 +7,7 @@ import capstone.gitime.api.exception.exception.team.NotFoundTeamException;
 import capstone.gitime.domain.board.entity.Board;
 import capstone.gitime.domain.board.repository.BoardRepository;
 import capstone.gitime.domain.board.repository.CommentRepository;
+import capstone.gitime.domain.board.service.dto.BoardDetailResponseDto;
 import capstone.gitime.domain.board.service.dto.BoardListResponseDto;
 import capstone.gitime.domain.memberteam.entity.MemberTeam;
 import capstone.gitime.domain.memberteam.repository.MemberTeamRepository;
@@ -14,6 +15,8 @@ import capstone.gitime.domain.team.entity.Team;
 import capstone.gitime.domain.team.repository.TeamRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,17 +31,20 @@ public class BoardService {
     private final TeamRepository teamRepository;
 
 
-    public Page<BoardListResponseDto> getAllBoard(String teamName) {
-        Page<Board> boards = boardRepository.findFetchMemberTeamAllByTeamName(teamName);
+    public Page<BoardListResponseDto> getAllBoard(String teamName, Integer page) {
+
+        PageRequest pageRequest = PageRequest.of(page, 5, Sort.Direction.ASC);
+
+        Page<Board> boards = boardRepository.findFetchMemberTeamAllByTeamName(teamName,pageRequest);
 
         return boards.map(BoardListResponseDto::of);
     }
 
-    public BoardListResponseDto getBoardContent(Long boardId) {
+    public BoardDetailResponseDto getBoardContent(Long boardId) {
         Board findBoard = boardRepository.findBoardById(boardId)
                 .orElseThrow(() -> new NotFoundBoardException());
 
-        return BoardListResponseDto.of(findBoard);
+        return BoardDetailResponseDto.of(findBoard);
     }
 
     @Transactional
