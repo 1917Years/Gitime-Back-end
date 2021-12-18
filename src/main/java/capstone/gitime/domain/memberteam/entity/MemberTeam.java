@@ -1,5 +1,6 @@
 package capstone.gitime.domain.memberteam.entity;
 
+import capstone.gitime.domain.common.entity.BaseTimeEntity;
 import capstone.gitime.domain.developfield.entity.DevelopField;
 import capstone.gitime.domain.member.entity.Member;
 import capstone.gitime.domain.team.entity.Team;
@@ -13,7 +14,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberTeam {
+public class MemberTeam extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

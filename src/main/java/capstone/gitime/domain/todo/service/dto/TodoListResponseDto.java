@@ -13,15 +13,16 @@ public class TodoListResponseDto {
 
     private String todo;
     private String developField;
-    private LocalDate createdDate;
+    private LocalDate startDate;
+    private LocalDate untilDate;
     private Boolean isFinish;
 
     public static TodoListResponseDto of(Todo todo) {
-        LocalDateTime date = todo.getCreatedAt();
-
-        return new TodoListResponseDto(todo.getWorking(), todo.getDevelopField().getField(), LocalDate.of(date.getYear(),
-                date.getMonth(),
-                date.getDayOfMonth()),
+        return new TodoListResponseDto(todo.getWorking(), todo.getDevelopField() == null ? null : todo.getDevelopField().getField(),
+                LocalDate.of(todo.getCreatedAt().getYear(),
+                        todo.getCreatedAt().getMonth(),
+                        todo.getCreatedAt().getDayOfMonth()),
+                todo.getUntilDate(),
                 todo.getIsFinish());
     }
 

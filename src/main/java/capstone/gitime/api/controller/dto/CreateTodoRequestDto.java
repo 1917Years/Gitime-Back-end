@@ -9,6 +9,6 @@ public class CreateTodoRequestDto {
 
     private String field;
     private String working;
-    private LocalDate untilDate;
+    private String untilDate;
 
 }

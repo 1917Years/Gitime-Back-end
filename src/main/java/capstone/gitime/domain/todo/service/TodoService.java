@@ -17,10 +17,12 @@ import capstone.gitime.domain.todo.entity.Todo;
 import capstone.gitime.domain.todo.repository.TodoRepository;
 import capstone.gitime.domain.todo.service.dto.TodoListResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +41,7 @@ public class TodoService {
 
     @Transactional
     public void createTodo(CreateTodoRequestDto requestDto, Long memberId, String teamName) {
-        memberDevelopAccessCheck(requestDto.getField(), memberId, teamName);
+//        memberDevelopAccessCheck(requestDto.getField(), memberId, teamName);
 
         Team findTeam = teamRepository.findTeamByName(teamName)
                 .orElseThrow(() -> new NotFoundTeamException());
@@ -47,12 +49,16 @@ public class TodoService {
         DevelopField findDevelopField = developFieldRepository.findByField(requestDto.getField(), teamName)
                 .orElseThrow(() -> new NotFoundDevelopFieldException());
 
+        String[] splitDate = requestDto.getUntilDate().split("/");
         Todo newTodo = Todo.createTodo()
                 .team(findTeam)
                 .developField(findDevelopField)
                 .working(requestDto.getWorking())
                 .isFinish(false)
-                .untilDate(requestDto.getUntilDate())
+                .untilDate(LocalDate.of(
+                        Integer.parseInt(splitDate[0]),
+                        Integer.parseInt(splitDate[1]),
+                        Integer.parseInt(splitDate[2])))
                 .build();
 
         todoRepository.save(newTodo);
