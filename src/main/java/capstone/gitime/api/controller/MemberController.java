@@ -8,6 +8,9 @@ import capstone.gitime.api.controller.dto.ResultResponseDto;
 import capstone.gitime.api.service.MemberService;
 import capstone.gitime.domain.member.entity.Member;
 import capstone.gitime.domain.member.repository.MemberRepository;
+import capstone.gitime.domain.memberteam.service.MemberTeamService;
+import capstone.gitime.domain.memberteam.service.dto.InvitationListRequestDto;
+import capstone.gitime.domain.team.service.dto.InviteTeamRequestDto;
 import capstone.gitime.domain.uploadfile.service.ImageFileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -23,10 +26,8 @@ import java.util.Collections;
 public class MemberController {
 
     private final MemberService memberService;
-    private final MemberRepository memberRepository;
+    private final MemberTeamService memberTeamService;
     private final ImageFileService imageFileService;
-
-
 
     // 유저 정보 가져오기
     @GetMapping
@@ -46,5 +47,22 @@ public class MemberController {
 
         memberService.updateProfileImg(memberId, imageFileService.preStoreProfileImageFile(multipartFile, memberId));
         return new ResultResponseDto<>(200, "프로필 이미지 업데이트가 성공적으로 완료되었습니다.", Collections.emptyList());
+    }
+
+    @PostMapping("/invite/{teamName}/accept")
+    public ResultResponseDto<String> acceptInviteMemberToTeam(@PathVariable("teamName") String teamName,
+                                                              @Token Long memberId,
+                                                              @RequestBody InviteTeamRequestDto requestDto) {
+
+        memberTeamService.modifyInviteTeamRequest(requestDto, memberId, teamName);
+
+        return new ResultResponseDto<>(200, "OK!", Collections.emptyList());
+    }
+
+    @GetMapping("/invite")
+    public ResultResponseDto<InvitationListRequestDto> getAllInvitationToTeam(@Token Long memberId) {
+
+        return new ResultResponseDto<>(200, "OK!", memberTeamService.getAllInvitationToTeam(memberId));
+
     }
 }

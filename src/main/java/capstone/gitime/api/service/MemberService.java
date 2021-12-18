@@ -3,6 +3,7 @@ package capstone.gitime.api.service;
 import capstone.gitime.api.controller.dto.MemberModifyRequestDto;
 import capstone.gitime.api.exception.exception.member.NotFoundMemberException;
 import capstone.gitime.api.service.dto.MemberInfoResponseDto;
+import capstone.gitime.api.service.dto.MemberSearchResponseDto;
 import capstone.gitime.domain.member.entity.Member;
 import capstone.gitime.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +44,13 @@ public class MemberService {
         Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotFoundMemberException());
         findMember.updateProfileImg(storeFileName);
+    }
+
+    public MemberSearchResponseDto getMemberByEmail(String email) {
+        Member findMember = memberRepository.findMemberByEmail(email)
+                .orElseThrow(() -> new NotFoundMemberException());
+
+        return MemberSearchResponseDto.of(findMember);
     }
 
 

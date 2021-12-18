@@ -86,6 +86,11 @@ public class TodoService {
         Map<String, Integer> resultCount = new ConcurrentHashMap<>();
         Map<String, Double> finalResult = new ConcurrentHashMap<>();
 
+        /**
+         * DevelopField : 백엔드 , 프론트, UI
+         * Map<String,Double>
+         *     { [백엔드,33.02], [프론트,22,43], [UI,72.32] }
+         */
         todoRepository.findAllByTeam(teamName)
                 .stream().forEach((item) -> {
                     if (resultCount.get(item.getDevelopField().getField()) == null) {

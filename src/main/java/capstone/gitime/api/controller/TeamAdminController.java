@@ -2,6 +2,8 @@ package capstone.gitime.api.controller;
 
 import capstone.gitime.api.common.annotation.Token;
 import capstone.gitime.api.controller.dto.*;
+import capstone.gitime.api.service.MemberService;
+import capstone.gitime.api.service.dto.MemberSearchResponseDto;
 import capstone.gitime.domain.memberteam.service.MemberTeamService;
 import capstone.gitime.domain.memberteam.service.dto.InviteMemberListRequestDto;
 import capstone.gitime.domain.team.service.TeamService;
@@ -21,7 +23,15 @@ import java.util.List;
 public class TeamAdminController {
 
     private final TeamService teamService;
+    private final MemberService memberService;
     private final MemberTeamService memberTeamService;
+
+    @PostMapping("/members/search")
+    public ResultResponseDto<MemberSearchResponseDto> searchMemberByEmailToInviteTeam(@RequestBody SearchMemberRequestDto requestDto
+    ) {
+
+        return new ResultResponseDto<>(200, "OK!", List.of(memberService.getMemberByEmail(requestDto.getEmail())));
+    }
 
     @DeleteMapping("/{teamName}/team/delete")
     public ResultResponseDto<String> deleteTeam(@PathVariable("teamName") String teamName,
@@ -95,16 +105,28 @@ public class TeamAdminController {
         return new ResultResponseDto<>(200, "OK!", Collections.emptyList());
     }
 
+    @GetMapping("/{teamName}/members/invite")
+    public ResultResponseDto<Page<InviteMemberListRequestDto>> getInviteTeamMemberList(@PathVariable("teamName") String teamName,
+                                                                                       @RequestParam(value = "page", defaultValue = "0") String page) {
+        return new ResultResponseDto<>(200, "OK!", List.of(memberTeamService.getMemberTeamInviteList(teamName, Integer.valueOf(page))));
+    }
+
     @GetMapping("/{teamName}/members")
     public ResultResponseDto<TeamMemberListInfoRequestDto> getTeamMemberList(@PathVariable("teamName") String teamName,
                                                                              @Token Long memberId) {
         return new ResultResponseDto<>(200, "OK!", teamService.getTeamMemberListInfo(memberId, teamName));
     }
 
-    @GetMapping("/{teamName}/members/invite")
-    public ResultResponseDto<Page<InviteMemberListRequestDto>> getInviteTeamMemberList(@PathVariable("teamName") String teamName,
-                                                                                       @RequestParam(value = "page", defaultValue = "0") String page) {
-        return new ResultResponseDto<>(200, "OK!", List.of(memberTeamService.getMemberTeamInviteList(teamName, Integer.valueOf(page))));
+    @PostMapping("/{teamName}/members/invite")
+    public ResultResponseDto<String> inviteMemberToTeam(@PathVariable("teamName") String teamName,
+                                                        @RequestBody CreateInviteRequestDto requestDto) {
+
+        memberTeamService.inviteMemberToTeam(teamName, requestDto);
+
+        return new ResultResponseDto<>(200, "OK!", Collections.emptyList());
     }
+
+
+
 
 }

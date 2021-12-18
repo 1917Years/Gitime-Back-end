@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.parameters.P;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -27,6 +28,9 @@ public interface MemberTeamRepository extends JpaRepository<MemberTeam,Long> {
             countQuery = "select count(mt) from MemberTeam mt join mt.team t where t.teamName=:teamName")
     Page<MemberTeam> findLazyListPageByTeamName(@Param("teamName") String teamName,
                                                          Pageable pageable);
+
+    @Query(value = "select mt from MemberTeam mt join fetch mt.team t join mt.member m where m.id=:memberId and mt.teamMemberStatus =:teamMemberStatus")
+    List<MemberTeam> findAllByMemberId(@Param("memberId") Long memberId,@Param("teamMemberStatus") TeamMemberStatus teamMemberStatus);
 
     @Query(value = "select mt from MemberTeam mt where mt.member = :memberId and mt.team = :teamId")
     Optional<MemberTeam> findByTeamAndMember(@Param("memberId") Long memberId, @Param("teamId") Long teamId);

@@ -1,5 +1,6 @@
 package capstone.gitime.domain.memberteam.service;
 
+import capstone.gitime.api.controller.dto.CreateInviteRequestDto;
 import capstone.gitime.api.controller.dto.SetDevelopFieldRequestDto;
 import capstone.gitime.api.exception.exception.global.NotAccessException;
 import capstone.gitime.api.exception.exception.global.NotFoundException;
@@ -15,6 +16,7 @@ import capstone.gitime.domain.memberteam.entity.MemberTeam;
 import capstone.gitime.domain.memberteam.entity.TeamAuthority;
 import capstone.gitime.domain.memberteam.entity.TeamMemberStatus;
 import capstone.gitime.domain.memberteam.repository.MemberTeamRepository;
+import capstone.gitime.domain.memberteam.service.dto.InvitationListRequestDto;
 import capstone.gitime.domain.memberteam.service.dto.InviteMemberListRequestDto;
 import capstone.gitime.domain.team.entity.Team;
 import capstone.gitime.domain.team.entity.TeamStatus;
@@ -27,6 +29,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -53,11 +58,11 @@ public class MemberTeamService {
     }
 
     @Transactional
-    public void inviteMemberToTeam(Long teamId, Long invitedMemberId) {
-        Team findTeam = teamRepository.findById(teamId)
+    public void inviteMemberToTeam(String teamName, CreateInviteRequestDto requestDto) {
+        Team findTeam = teamRepository.findTeamByName(teamName)
                 .orElseThrow(() -> new NotFoundTeamException());
 
-        Member invitedMember = memberRepository.findById(invitedMemberId)
+        Member invitedMember = memberRepository.findByEmail(requestDto.getMemberEmail())
                 .orElseThrow(() -> new NotFoundMemberException());
 
         MemberTeam newMemberTeam = MemberTeam.createMemberTeamEntity()
@@ -70,18 +75,24 @@ public class MemberTeamService {
         memberTeamRepository.save(newMemberTeam);
     }
 
+    public List<InvitationListRequestDto> getAllInvitationToTeam(Long memberId) {
+        return memberTeamRepository.findAllByMemberId(memberId, TeamMemberStatus.WAIT).stream()
+                .map(InvitationListRequestDto::of)
+                .collect(Collectors.toList());
+    }
+
     @Transactional
-    public void modifyInviteTeamRequest(InviteTeamRequestDto requestDto, Long memberId, Long teamId) {
+    public void modifyInviteTeamRequest(InviteTeamRequestDto requestDto, Long memberId, String teamName) {
         if (requestDto.getRequest().equals("ACCEPT")) {
 
-            memberTeamRepository.findByTeamAndMember(memberId, teamId)
+            memberTeamRepository.findByTeamNameAndMember(memberId, teamName)
                     .orElseThrow(() -> new NotFoundMemberTeamException())
                     .updateTeamInvite(TeamMemberStatus.ACCEPT);
 
         } else if (requestDto.getRequest().equals("DENIED")) {
 
             // DB 상에서 삭제하지 않는 이유는 나중에 팀 관리 페이지 멤버 초대쪽에서 로그로 보여주기 위함.
-            memberTeamRepository.findByTeamAndMember(memberId, teamId)
+            memberTeamRepository.findByTeamNameAndMember(memberId, teamName)
                     .orElseThrow(() -> new NotFoundMemberTeamException())
                     .updateTeamInvite(TeamMemberStatus.DENIED);
 
