@@ -26,7 +26,7 @@ public class MemberTeam {
     @Enumerated(value = EnumType.STRING)
     private TeamMemberStatus teamMemberStatus;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "develop_field_id", foreignKey = @ForeignKey(name = "member_team_develop_field_fk"))
     private DevelopField developField;
 

@@ -33,6 +33,11 @@ public class Comment extends BaseTimeEntity {
     public Comment(String content, MemberTeam memberTeam, Board board) {
         this.content = content;
         this.memberTeam = memberTeam;
+        updateBoard(board);
+    }
+
+    public void updateBoard(Board board) {
         this.board = board;
+        board.getCommentList().add(this);
     }
 }

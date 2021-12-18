@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class BoardListResponseDto {
 
+    private Long id;
     private String title;
     private String content;
     private String writer;
@@ -20,10 +21,11 @@ public class BoardListResponseDto {
 
     public static BoardListResponseDto of(Board board) {
         return new BoardListResponseDto(
+                board.getId(),
                 board.getTitle(),
                 board.getContent(),
                 board.getMemberTeam().getMember().getUserName(),
-                board.getMemberTeam().getDevelopField().getField(),
+                board.getMemberTeam().getDevelopField() == null ? null : board.getMemberTeam().getDevelopField().getField(),
                 board.getCreatedAt(),
                 board.getLikeCount(),
                 board.getCommentList().size());

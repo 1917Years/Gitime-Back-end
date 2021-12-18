@@ -15,6 +15,7 @@ import capstone.gitime.domain.memberteam.entity.MemberTeam;
 import capstone.gitime.domain.memberteam.entity.TeamAuthority;
 import capstone.gitime.domain.memberteam.entity.TeamMemberStatus;
 import capstone.gitime.domain.memberteam.repository.MemberTeamRepository;
+import capstone.gitime.domain.memberteam.service.dto.InviteMemberListRequestDto;
 import capstone.gitime.domain.team.entity.Team;
 import capstone.gitime.domain.team.entity.TeamStatus;
 import capstone.gitime.domain.team.repository.TeamRepository;
@@ -23,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +42,14 @@ public class MemberTeamService {
     public Page<TeamInfoResponseDto> getMemberTeamList(Long memberId, int page) {
         return memberTeamRepository.findLazyListPageByIdAndAccept(memberId, PageRequest.of(page, 5), TeamMemberStatus.ACCEPT, TeamStatus.ACTIVE)
                 .map(TeamInfoResponseDto::new);
+    }
+
+    public Page<InviteMemberListRequestDto> getMemberTeamInviteList(String teamName, Integer page) {
+
+        PageRequest pageRequest = PageRequest.of(page, 10, Sort.Direction.DESC, "createdAt");
+
+        return memberTeamRepository.findLazyListPageByTeamName(teamName, pageRequest)
+                .map(InviteMemberListRequestDto::of);
     }
 
     @Transactional
@@ -83,9 +93,14 @@ public class MemberTeamService {
     }
 
     @Transactional
-    public void setDevelopFieldToMember(SetDevelopFieldRequestDto requestDto, Long memberId, String teamName) {
-        MemberTeam findMemberTeam = memberTeamRepository.findByTeamNameAndMember(memberId, teamName)
+    public void setDevelopFieldToMember(SetDevelopFieldRequestDto requestDto, String teamName) {
+        MemberTeam findMemberTeam = memberTeamRepository.findByTeamNameAndMemberEmail(requestDto.getMemberEmail(), teamName)
                 .orElseThrow(() -> new NotFoundMemberTeamException());
+
+        if (requestDto.getIsDeleted()) {
+            findMemberTeam.updateDevelopField(null);
+            return;
+        }
 
         DevelopField findDevelopField = developFieldRepository.findByField(requestDto.getDevelopField(), teamName)
                 .orElseThrow(() -> new NotFoundException());

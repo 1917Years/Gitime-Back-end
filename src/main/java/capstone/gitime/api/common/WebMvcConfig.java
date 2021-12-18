@@ -29,17 +29,17 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(teamAccessInterceptor)
-                .addPathPatterns("/api/v1/dashboard/**");
+//        registry.addInterceptor(teamAccessInterceptor)
+//                .addPathPatterns("/api/v1/dashboard/**");
 
     }
 
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("*")
-                .allowedHeaders("*")
-                .allowCredentials(false)
-                .allowedMethods("*");
-    }
+//    @Override
+//    public void addCorsMappings(CorsRegistry registry) {
+//        registry.addMapping("/**")
+//                .allowedOrigins("*")
+//                .allowedHeaders("*")
+//                .allowCredentials(false)
+//                .allowedMethods("*");
+//    }
 }

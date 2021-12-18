@@ -7,7 +7,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.w3c.dom.stylesheets.LinkStyle;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -42,11 +41,11 @@ public class Board extends BaseTimeEntity {
     private List<Comment> commentList = new ArrayList<>();
 
     @Builder(builderMethodName = "createBoard")
-    public Board(String title, String content, MemberTeam memberTeam, Team team, Integer likeCount) {
+    public Board(String title, String content, MemberTeam memberTeam, Team team) {
         this.team = team;
         this.title = title;
         this.content = content;
         this.memberTeam = memberTeam;
-        this.likeCount = likeCount;
+        this.likeCount = 0;
     }
 }

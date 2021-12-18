@@ -20,7 +20,7 @@ public class TeamMemberListInfoRequestDto {
         return new TeamMemberListInfoRequestDto(memberTeam.getMember().getEmail(),
                 memberTeam.getMember().getUserName(),
                 memberTeam.getTeamAuthority(),
-                memberTeam.getDevelopField().getField());
+                memberTeam.getDevelopField() == null ? null:memberTeam.getDevelopField().getField());
     }
 
 }
