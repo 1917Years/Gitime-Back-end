@@ -49,12 +49,10 @@ public class MemberController {
         return new ResultResponseDto<>(200, "프로필 이미지 업데이트가 성공적으로 완료되었습니다.", Collections.emptyList());
     }
 
-    @PostMapping("/invite/{teamName}/accept")
-    public ResultResponseDto<String> acceptInviteMemberToTeam(@PathVariable("teamName") String teamName,
-                                                              @Token Long memberId,
-                                                              @RequestBody InviteTeamRequestDto requestDto) {
+    @GetMapping("/invite/accept/{acceptCode}")
+    public ResultResponseDto<String> acceptInviteMemberToTeam(@Token Long memberId, @PathVariable("acceptCode") String acceptCode) {
 
-        memberTeamService.modifyInviteTeamRequest(requestDto, memberId, teamName);
+        memberTeamService.modifyInviteTeamRequest(acceptCode, memberId);
 
         return new ResultResponseDto<>(200, "OK!", Collections.emptyList());
     }

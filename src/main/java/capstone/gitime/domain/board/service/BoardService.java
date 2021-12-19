@@ -11,6 +11,9 @@ import capstone.gitime.domain.board.service.dto.BoardDetailResponseDto;
 import capstone.gitime.domain.board.service.dto.BoardListResponseDto;
 import capstone.gitime.domain.memberteam.entity.MemberTeam;
 import capstone.gitime.domain.memberteam.repository.MemberTeamRepository;
+import capstone.gitime.domain.notification.entity.NotificationImportance;
+import capstone.gitime.domain.notification.entity.NotificationType;
+import capstone.gitime.domain.notification.service.NotificationService;
 import capstone.gitime.domain.team.entity.Team;
 import capstone.gitime.domain.team.repository.TeamRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +25,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -30,14 +35,12 @@ public class BoardService {
 
     private final MemberTeamRepository memberTeamRepository;
     private final BoardRepository boardRepository;
-    private final CommentRepository commentRepository;
     private final TeamRepository teamRepository;
-
+    private final NotificationService notificationService;
 
     public Page<BoardListResponseDto> getAllBoard(String teamName, Integer page) {
 
         PageRequest pageRequest = PageRequest.of(page, 5, Sort.Direction.DESC,"createdAt");
-        log.info("{}",pageRequest.getPageSize());
 
         Page<Board> boards = boardRepository.findFetchMemberTeamAllByTeamName(teamName, pageRequest);
 
@@ -67,5 +70,12 @@ public class BoardService {
                 .build();
 
         boardRepository.save(newBoard);
+
+        // push notification
+        notificationService.pushNotificationToTeam(
+                findMemberTeam,
+                NotificationType.BOARD,
+                NotificationImportance.NORMAL,
+                LocalDate.of(2030, 12, 10));
     }
 }

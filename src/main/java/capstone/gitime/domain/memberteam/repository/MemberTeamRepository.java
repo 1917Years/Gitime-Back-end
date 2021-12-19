@@ -17,23 +17,21 @@ import java.util.Optional;
 public interface MemberTeamRepository extends JpaRepository<MemberTeam,Long> {
 
     @Query(value = "select mt from MemberTeam mt join fetch mt.member m join fetch mt.team t " +
-            "join fetch t.gitRepo g where m.id=:memberId and mt.teamMemberStatus = :teamMemberStatus and " +
-            "t.teamStatus=:teamStatus",
+            "join fetch t.gitRepo g where m.id=:memberId and mt.teamMemberStatus = 'ACCEPT' and " +
+            "t.teamStatus='ACTIVE'",
             countQuery = "select count(mt) from MemberTeam mt where mt.member.id=:memberId")
-    Page<MemberTeam> findLazyListPageByIdAndAccept(@Param("memberId") Long memberId, Pageable pageable,
-                                                   @Param("teamMemberStatus") TeamMemberStatus teamMemberStatus,
-                                                   @Param("teamStatus") TeamStatus teamStatus);
+    Page<MemberTeam> findLazyListPageByIdAndAccept(@Param("memberId") Long memberId, Pageable pageable);
 
     @Query(value = "select mt from MemberTeam mt join fetch mt.member m join mt.team t where t.teamName=:teamName",
             countQuery = "select count(mt) from MemberTeam mt join mt.team t where t.teamName=:teamName")
     Page<MemberTeam> findLazyListPageByTeamName(@Param("teamName") String teamName,
                                                          Pageable pageable);
 
-    @Query(value = "select mt from MemberTeam mt join fetch mt.team t join mt.member m where m.id=:memberId and mt.teamMemberStatus =:teamMemberStatus")
-    List<MemberTeam> findAllByMemberId(@Param("memberId") Long memberId,@Param("teamMemberStatus") TeamMemberStatus teamMemberStatus);
+    @Query(value = "select mt from MemberTeam mt join fetch mt.member m join mt.team t where mt.teamMemberStatus='ACCEPT' and t.teamName=:teamName")
+    List<MemberTeam> findByAcceptAndTeamName(@Param("teamName") String teamName);
 
-    @Query(value = "select mt from MemberTeam mt where mt.member = :memberId and mt.team = :teamId")
-    Optional<MemberTeam> findByTeamAndMember(@Param("memberId") Long memberId, @Param("teamId") Long teamId);
+    @Query(value = "select mt from MemberTeam mt join fetch mt.team t join mt.member m where m.id=:memberId and mt.teamMemberStatus ='WAIT'")
+    List<MemberTeam> findAllByMemberId(@Param("memberId") Long memberId);
 
     @Query(value = "select mt from MemberTeam mt join mt.team t where mt.member.id = :memberId and t.teamName = :teamName")
     Optional<MemberTeam> findByTeamNameAndMember(@Param("memberId") Long memberId, @Param("teamName") String teamName);
@@ -41,12 +39,12 @@ public interface MemberTeamRepository extends JpaRepository<MemberTeam,Long> {
     @Query(value = "select mt from MemberTeam mt join mt.team t join mt.member m where m.email = :memberEmail and t.teamName = :teamName")
     Optional<MemberTeam> findByTeamNameAndMemberEmail(@Param("memberEmail") String memberEmail, @Param("teamName") String teamName);
 
-    @Query(value = "select mt from MemberTeam mt join fetch mt.member m join mt.team t where t.teamName = :teamName")
-    List<MemberTeam> findFetchMemberByTeamNameAndMember(@Param("teamName") String teamName);
-
     @Query(value = "select mt from MemberTeam mt join mt.team t join fetch mt.developField df where mt.member.id = :memberId and t.teamName = :teamName")
     Optional<MemberTeam> findFetchDevelopFieldByTeamNameAndMember(@Param("memberId") Long memberId, @Param("teamName") String teamName);
 
     @Query(value = "select df.field from MemberTeam mt join mt.developField df where mt.member = :memberId and mt.team = :teamId")
     String findFieldByTeamAndMember(@Param("memberId") Long memberId, @Param("teamId") Long teamId);
+
+    @Query(value = "select mt from MemberTeam mt join mt.team t join mt.member m where m.id=:memberId and mt.acceptCode=:acceptCode")
+    Optional<MemberTeam> findByMemberAndAcceptCode(@Param("memberId") Long memberId, @Param("acceptCode") String acceptCode);
 }

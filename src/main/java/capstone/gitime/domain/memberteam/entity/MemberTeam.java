@@ -27,6 +27,8 @@ public class MemberTeam extends BaseTimeEntity {
     @Enumerated(value = EnumType.STRING)
     private TeamMemberStatus teamMemberStatus;
 
+    private String acceptCode;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "develop_field_id", foreignKey = @ForeignKey(name = "member_team_develop_field_fk"))
     private DevelopField developField;
@@ -57,12 +59,20 @@ public class MemberTeam extends BaseTimeEntity {
         this.teamAuthority = teamAuthority;
     }
 
+    public void updateAcceptCode(String acceptCode) {
+        this.acceptCode = acceptCode;
+    }
+
     public void updateDevelopField(DevelopField developField) {
         this.developField = developField;
     }
 
     public void updateTeamInvite(TeamMemberStatus teamMemberStatus) {
         this.teamMemberStatus = teamMemberStatus;
+    }
+
+    public void deleteAcceptCode() {
+        this.acceptCode = null;
     }
 
     public void deleteMemberTeam() {

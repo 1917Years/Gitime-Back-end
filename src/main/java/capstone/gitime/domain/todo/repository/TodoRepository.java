@@ -13,6 +13,9 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
     @Query("select to from Todo to join to.team t join fetch to.developField df where t.teamName=:teamName")
     List<Todo> findAllByTeam(@Param("teamName") String teamName);
 
+    @Query("select to from Todo to join to.team t where t.teamName = :teamName")
+    List<Todo> findAllNotFetchByTeam(@Param("teamName") String teamName);
+
     @Query("select to from Todo to join to.developField df join to.team t where df.field=:field and t.teamName=:teamName" +
             " and to.working=:working")
     Optional<Todo> findByDevelopFieldAndTeamName(@Param("field") String field,

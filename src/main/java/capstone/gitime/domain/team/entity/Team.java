@@ -3,6 +3,7 @@ package capstone.gitime.domain.team.entity;
 import capstone.gitime.domain.common.entity.BaseTimeEntity;
 import capstone.gitime.domain.common.entity.GitRepo;
 import capstone.gitime.domain.developfield.entity.DevelopField;
+import capstone.gitime.domain.endpoint.entity.EndPoint;
 import capstone.gitime.domain.memberteam.entity.MemberTeam;
 import capstone.gitime.domain.team.service.dto.UpdateTeamInfoRequestDto;
 import lombok.AccessLevel;
@@ -54,6 +55,9 @@ public class Team extends BaseTimeEntity {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "team")
     private List<TeamNotice> teamNotices = new ArrayList<>();
 
+    @OneToOne(fetch = FetchType.LAZY)
+    private EndPoint endPoint;
+
     @Builder(builderMethodName = "createTeamEntity")
     public Team(String teamName, String chatUUID, String teamDescription, GitRepo gitRepo, DevelopType developType, TeamStatus teamStatus) {
         this.developType = developType;
@@ -62,6 +66,7 @@ public class Team extends BaseTimeEntity {
         this.gitRepo = gitRepo;
         this.teamStatus = teamStatus;
         this.chatUUID = chatUUID;
+        this.endPoint = null;
     }
 
     public void updateTeamInfo(UpdateTeamInfoRequestDto requestDto) {
@@ -80,6 +85,10 @@ public class Team extends BaseTimeEntity {
 
     public void updateTeamStatus(TeamStatus teamStatus) {
         this.teamStatus = teamStatus;
+    }
+
+    public void updateEndPoint(EndPoint endPoint) {
+        this.endPoint = endPoint;
     }
 
 }

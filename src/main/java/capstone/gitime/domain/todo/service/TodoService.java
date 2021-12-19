@@ -11,6 +11,9 @@ import capstone.gitime.domain.developfield.entity.DevelopField;
 import capstone.gitime.domain.developfield.repository.DevelopFieldRepository;
 import capstone.gitime.domain.memberteam.entity.MemberTeam;
 import capstone.gitime.domain.memberteam.repository.MemberTeamRepository;
+import capstone.gitime.domain.notification.entity.NotificationImportance;
+import capstone.gitime.domain.notification.entity.NotificationType;
+import capstone.gitime.domain.notification.service.NotificationService;
 import capstone.gitime.domain.team.entity.Team;
 import capstone.gitime.domain.team.repository.TeamRepository;
 import capstone.gitime.domain.todo.entity.Todo;
@@ -38,20 +41,22 @@ public class TodoService {
     private final DevelopFieldRepository developFieldRepository;
     private final TeamRepository teamRepository;
     private final MemberTeamRepository memberTeamRepository;
+    private final NotificationService notificationService;
 
     @Transactional
     public void createTodo(CreateTodoRequestDto requestDto, Long memberId, String teamName) {
 //        memberDevelopAccessCheck(requestDto.getField(), memberId, teamName);
 
-        Team findTeam = teamRepository.findTeamByName(teamName)
-                .orElseThrow(() -> new NotFoundTeamException());
+        MemberTeam findMemberTeam = memberTeamRepository.findByTeamNameAndMember(memberId, teamName)
+                .orElseThrow(() -> new NotFoundMemberTeamException());
 
         DevelopField findDevelopField = developFieldRepository.findByField(requestDto.getField(), teamName)
                 .orElseThrow(() -> new NotFoundDevelopFieldException());
 
         String[] splitDate = requestDto.getUntilDate().split("/");
+
         Todo newTodo = Todo.createTodo()
-                .team(findTeam)
+                .team(findMemberTeam.getTeam())
                 .developField(findDevelopField)
                 .working(requestDto.getWorking())
                 .isFinish(false)
@@ -62,6 +67,13 @@ public class TodoService {
                 .build();
 
         todoRepository.save(newTodo);
+
+        notificationService.pushNotificationToTeam(findMemberTeam, NotificationType.TODO, NotificationImportance.NORMAL,
+                LocalDate.of(
+                        Integer.parseInt(splitDate[0]),
+                        Integer.parseInt(splitDate[1]),
+                        Integer.parseInt(splitDate[2])));
+
     }
 
     @Transactional
@@ -91,30 +103,37 @@ public class TodoService {
          * Map<String,Double>
          *     { [백엔드,33.02], [프론트,22,43], [UI,72.32] }
          */
-        todoRepository.findAllByTeam(teamName)
-                .stream().forEach((item) -> {
-                    if (resultCount.get(item.getDevelopField().getField()) == null) {
-                        if (resultCount.get(item.getDevelopField().getField()) == null) {
-                            resultCount.put(item.getDevelopField().getField(), 1);
-                        } else {
-                            resultCount.put(item.getDevelopField().getField(), resultCount.get(item.getDevelopField().getField()) + 1);
-                        }
-                    }
 
-                    if (item.getIsFinish()) {
-                        if (result.get(item.getDevelopField().getField()) == null) {
-                            result.put(item.getDevelopField().getField(), 1);
-                        } else {
-                            result.put(item.getDevelopField().getField(), result.get(item.getDevelopField().getField()) + 1);
-                        }
-                    }
+        List<Todo> allTodos = todoRepository.findAllByTeam(teamName);
+
+        for (Todo item : allTodos) {
+            Integer cntTmp;
+            if (resultCount.get(item.getDevelopField().getField()) == null) {
+                resultCount.put(item.getDevelopField().getField(), 1);
+            } else {
+                cntTmp = resultCount.get(item.getDevelopField().getField());
+                resultCount.put(item.getDevelopField().getField(), cntTmp + 1);
+            }
+        }
+
+        resultCount.keySet()
+                .forEach((key) -> {
+                    result.put(key, 0);
                 });
+
+        for (Todo item : allTodos){
+            Integer cntTmp;
+            if (item.getIsFinish()) {
+                cntTmp = result.get(item.getDevelopField().getField());
+                result.put(item.getDevelopField().getField(), cntTmp + 1);
+            }
+        }
 
         resultCount.keySet()
                 .stream().forEach((item) -> {
                     Integer completeCount = result.get(item);
                     Integer totalCount = resultCount.get(item);
-                    finalResult.put(item, completeCount / Double.valueOf(totalCount));
+                    finalResult.put(item, (completeCount / Double.valueOf(totalCount)) * 100);
                 });
 
         return finalResult;

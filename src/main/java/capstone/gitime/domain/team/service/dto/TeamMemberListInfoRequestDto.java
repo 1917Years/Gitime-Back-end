@@ -17,7 +17,8 @@ public class TeamMemberListInfoRequestDto {
     private String developField;
 
     public static TeamMemberListInfoRequestDto of(MemberTeam memberTeam) {
-        return new TeamMemberListInfoRequestDto(memberTeam.getMember().getEmail(),
+        return new TeamMemberListInfoRequestDto(
+                memberTeam.getMember().getEmail(),
                 memberTeam.getMember().getUserName(),
                 memberTeam.getTeamAuthority(),
                 memberTeam.getDevelopField() == null ? null:memberTeam.getDevelopField().getField());

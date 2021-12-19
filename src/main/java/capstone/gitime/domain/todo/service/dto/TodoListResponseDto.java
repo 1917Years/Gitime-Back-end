@@ -16,6 +16,7 @@ public class TodoListResponseDto {
     private LocalDate startDate;
     private LocalDate untilDate;
     private Boolean isFinish;
+    private LocalDate modifyFinishDate;
 
     public static TodoListResponseDto of(Todo todo) {
         return new TodoListResponseDto(todo.getWorking(), todo.getDevelopField() == null ? null : todo.getDevelopField().getField(),
@@ -23,7 +24,10 @@ public class TodoListResponseDto {
                         todo.getCreatedAt().getMonth(),
                         todo.getCreatedAt().getDayOfMonth()),
                 todo.getUntilDate(),
-                todo.getIsFinish());
+                todo.getIsFinish(),
+                todo.getIsFinish() ? LocalDate.of(todo.getLastModifiedAt().getYear(),
+                        todo.getLastModifiedAt().getMonth(),
+                        todo.getLastModifiedAt().getDayOfMonth()) : null);
     }
 
 }

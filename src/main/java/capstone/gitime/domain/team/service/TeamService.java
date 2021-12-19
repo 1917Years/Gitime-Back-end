@@ -14,6 +14,7 @@ import capstone.gitime.domain.common.repository.GitRepoRepository;
 import capstone.gitime.domain.common.service.dto.GitRepoResponseDto;
 import capstone.gitime.domain.developfield.entity.DevelopField;
 import capstone.gitime.domain.developfield.repository.DevelopFieldRepository;
+import capstone.gitime.domain.endpoint.service.EndPointService;
 import capstone.gitime.domain.member.entity.Member;
 import capstone.gitime.domain.member.repository.MemberRepository;
 import capstone.gitime.domain.memberteam.entity.MemberTeam;
@@ -46,6 +47,7 @@ public class TeamService {
     private final GitRepoRepository gitRepoRepository;
     private final DevelopFieldRepository developFieldRepository;
     private final TeamNoticeRepository teamNoticeRepository;
+    private final EndPointService endPointService;
 
     public List<GitRepoResponseDto> getRepoList(Long memberId) {
         return gitRepoRepository.findListBy(memberId)
@@ -90,12 +92,13 @@ public class TeamService {
 
         memberTeamRepository.save(newMemberTeam);
 
+        endPointService.codeFileDownloadAndSave(newTeam);
+
 
 
     }
 
     public TeamAdminInfoResponseDto getTeamInfo(Long memberId, String teamName) {
-        memberAccessCheck(memberId, teamName);
 
         Team findTeam = teamRepository.findTeamByName(teamName)
                 .orElseThrow(() -> new NotFoundTeamException());
@@ -166,7 +169,6 @@ public class TeamService {
     }
 
     public List<DevelopFieldResponseDto> getAllDevelopField(Long memberId, String teamName) {
-        memberAccessCheck(memberId, teamName);
 
         return teamRepository.findDevelopFieldByTeamName(teamName)
                 .stream().map(DevelopFieldResponseDto::of)
@@ -200,12 +202,9 @@ public class TeamService {
     }
 
     public List<TeamMemberListInfoRequestDto> getTeamMemberListInfo(Long memberId, String teamName) {
-        memberAccessCheck(memberId, teamName);
 
-        Team findTeam = teamRepository.findTeamByName(teamName)
-                .orElseThrow(() -> new NotFoundTeamException());
-
-        return findTeam.getMemberTeams().stream()
+        return memberTeamRepository.findByAcceptAndTeamName(teamName)
+                .stream()
                 .map(TeamMemberListInfoRequestDto::of)
                 .collect(Collectors.toList());
     }
