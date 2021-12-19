@@ -5,6 +5,7 @@ import capstone.gitime.api.controller.dto.SetDevelopFieldRequestDto;
 import capstone.gitime.api.exception.exception.global.NotAccessException;
 import capstone.gitime.api.exception.exception.global.NotFoundException;
 import capstone.gitime.api.exception.exception.member.NotFoundMemberException;
+import capstone.gitime.api.exception.exception.memberteam.DuplicateMemberTeamException;
 import capstone.gitime.api.exception.exception.memberteam.NotFoundMemberTeamException;
 import capstone.gitime.api.exception.exception.team.NotFoundTeamException;
 import capstone.gitime.api.service.dto.TeamInfoResponseDto;
@@ -59,6 +60,11 @@ public class MemberTeamService {
 
     @Transactional
     public void inviteMemberToTeam(String teamName, CreateInviteRequestDto requestDto) {
+
+        memberTeamRepository.findByTeamNameAndMemberEmail(requestDto.getMemberEmail(),
+                teamName).orElseThrow(() -> new DuplicateMemberTeamException());
+
+
         Team findTeam = teamRepository.findTeamByName(teamName)
                 .orElseThrow(() -> new NotFoundTeamException());
 

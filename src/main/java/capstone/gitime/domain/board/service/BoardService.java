@@ -44,8 +44,7 @@ public class BoardService {
         return boards.map(BoardListResponseDto::of);
     }
 
-    public BoardDetailResponseDto
-    getBoardContent(Long boardId) {
+    public BoardDetailResponseDto getBoardContent(Long boardId) {
         Board findBoard = boardRepository.findBoardById(boardId)
                 .orElseThrow(() -> new NotFoundBoardException());
 
