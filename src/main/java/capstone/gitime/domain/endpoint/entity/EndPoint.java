@@ -1,14 +1,19 @@
 package capstone.gitime.domain.endpoint.entity;
 
+import capstone.gitime.domain.endpoint.service.dto.ShellCommandResponseDto;
 import capstone.gitime.domain.team.entity.Team;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.catalina.Server;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -39,6 +44,11 @@ public class EndPoint {
     // teamName
     private String dockerImageName;
 
+    private Boolean serverCreated;
+
+    private String dockerContainerName;
+
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id", foreignKey = @ForeignKey(name = "team_end_point_fk"))
     private Team team;
@@ -59,6 +69,8 @@ public class EndPoint {
         this.codeFilePath = codeFilePath;
         this.dockerImageName = dockerImageName;
         this.team = team;
+        this.serverCreated = false;
+        this.dockerContainerName = UUID.randomUUID().toString();
         updateEndPoint(team);
     }
 
@@ -85,4 +97,14 @@ public class EndPoint {
     public void updateEndPoint(Team team) {
         team.updateEndPoint(this);
     }
+
+    public void updateServerCreated() {
+        this.serverCreated = true;
+    }
+
+    public void updateDockerContainer(String dockerContainerName) {
+        this.dockerContainerName = dockerContainerName;
+    }
+
+
 }

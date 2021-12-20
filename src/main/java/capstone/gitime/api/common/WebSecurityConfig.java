@@ -50,8 +50,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/v1/auth/**", "/api/v1/oauth2/**", "/oauth2/**", "/api/v1/files/images/**", "/api/v1/dashboard/**",
                         "/swagger-ui/**","/swagger-resources/**","/v3/**")
                 .permitAll()
-                .antMatchers("/api/v1/team/**", "/api/v1/teams/admin/**", "/api/v1/socket/**")
-                .hasAuthority(Authority.ROLE_SYNC_USER.toString())
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

@@ -100,10 +100,12 @@ public class TeamService {
 
     public TeamAdminInfoResponseDto getTeamInfo(Long memberId, String teamName) {
 
-        Team findTeam = teamRepository.findTeamByName(teamName)
+        MemberTeam findMemberTeam = memberTeamRepository.findFetchTeamByTeamNameAndMember(memberId, teamName)
                 .orElseThrow(() -> new NotFoundTeamException());
 
-        return TeamAdminInfoResponseDto.of(findTeam);
+        Integer totalMembers = teamRepository.countAllByTeamName(teamName);
+
+        return TeamAdminInfoResponseDto.of(findMemberTeam,totalMembers);
     }
 
     @Transactional

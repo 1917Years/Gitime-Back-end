@@ -13,6 +13,9 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
     @Query("select to from Todo to join to.team t join fetch to.developField df where t.teamName=:teamName")
     List<Todo> findAllByTeam(@Param("teamName") String teamName);
 
+    @Query("select to from Todo to join to.team t join fetch to.developField df where t.teamName in :teamName")
+    List<Todo> findAllByTeamNames(@Param("teamName") List<String> teamName);
+
     @Query("select to from Todo to join to.team t where t.teamName = :teamName")
     List<Todo> findAllNotFetchByTeam(@Param("teamName") String teamName);
 
@@ -21,5 +24,6 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
     Optional<Todo> findByDevelopFieldAndTeamName(@Param("field") String field,
                                                  @Param("teamName") String teamName,
                                                  @Param("working") String working);
+
 
 }

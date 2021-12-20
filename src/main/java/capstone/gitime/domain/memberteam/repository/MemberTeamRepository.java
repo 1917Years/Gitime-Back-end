@@ -36,6 +36,9 @@ public interface MemberTeamRepository extends JpaRepository<MemberTeam,Long> {
     @Query(value = "select mt from MemberTeam mt join mt.team t where mt.member.id = :memberId and t.teamName = :teamName")
     Optional<MemberTeam> findByTeamNameAndMember(@Param("memberId") Long memberId, @Param("teamName") String teamName);
 
+    @Query(value = "select mt from MemberTeam mt join fetch mt.team t where mt.member.id = :memberId and t.teamName = :teamName")
+    Optional<MemberTeam> findFetchTeamByTeamNameAndMember(@Param("memberId") Long memberId, @Param("teamName") String teamName);
+
     @Query(value = "select mt from MemberTeam mt join mt.team t join mt.member m where m.email = :memberEmail and t.teamName = :teamName")
     Optional<MemberTeam> findByTeamNameAndMemberEmail(@Param("memberEmail") String memberEmail, @Param("teamName") String teamName);
 

@@ -5,6 +5,7 @@ import capstone.gitime.api.controller.dto.ResultResponseDto;
 import capstone.gitime.api.service.dto.TeamInfoResponseDto;
 import capstone.gitime.domain.common.service.dto.GitRepoResponseDto;
 import capstone.gitime.domain.memberteam.service.MemberTeamService;
+import capstone.gitime.domain.memberteam.service.dto.TeamAllListResponseDto;
 import capstone.gitime.domain.team.service.TeamService;
 import capstone.gitime.domain.team.service.dto.CreateTeamRequestDto;
 import capstone.gitime.domain.team.service.dto.TeamNoticeResponseDto;
@@ -24,8 +25,8 @@ public class TeamController {
     private final MemberTeamService memberTeamService;
 
     @GetMapping
-    public Page<TeamInfoResponseDto> teamList(@RequestParam("page") int page, @Token Long memberId) {
-        return memberTeamService.getMemberTeamList(memberId, page);
+    public ResultResponseDto<TeamAllListResponseDto> teamList(@RequestParam("page") int page, @Token Long memberId) {
+        return new ResultResponseDto<>(200, "OK!", List.of(memberTeamService.getMemberTeamList(memberId, page)));
     }
 
     @GetMapping("/add")

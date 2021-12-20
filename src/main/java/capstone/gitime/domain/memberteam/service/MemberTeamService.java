@@ -21,11 +21,15 @@ import capstone.gitime.domain.memberteam.entity.TeamMemberStatus;
 import capstone.gitime.domain.memberteam.repository.MemberTeamRepository;
 import capstone.gitime.domain.memberteam.service.dto.InvitationListRequestDto;
 import capstone.gitime.domain.memberteam.service.dto.InviteMemberListRequestDto;
+import capstone.gitime.domain.memberteam.service.dto.TeamAllListAdditionalResponseDto;
+import capstone.gitime.domain.memberteam.service.dto.TeamAllListResponseDto;
 import capstone.gitime.domain.notification.entity.NotificationImportance;
 import capstone.gitime.domain.notification.entity.NotificationType;
 import capstone.gitime.domain.notification.service.NotificationService;
 import capstone.gitime.domain.team.entity.Team;
 import capstone.gitime.domain.team.repository.TeamRepository;
+import capstone.gitime.domain.todo.entity.Todo;
+import capstone.gitime.domain.todo.repository.TodoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -35,8 +39,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,10 +55,34 @@ public class MemberTeamService {
     private final DevelopFieldRepository developFieldRepository;
     private final NotificationService notificationService;
     private final MailService mailService;
+    private final TodoRepository todoRepository;
 
-    public Page<TeamInfoResponseDto> getMemberTeamList(Long memberId, int page) {
-        return memberTeamRepository.findLazyListPageByIdAndAccept(memberId, PageRequest.of(page, 5))
+
+    public TeamAllListResponseDto getMemberTeamList(Long memberId, int page) {
+
+        Page<TeamInfoResponseDto> pages = memberTeamRepository.findLazyListPageByIdAndAccept(memberId, PageRequest.of(page, 5))
                 .map(TeamInfoResponseDto::new);
+
+        ArrayList<String> teamNameList = new ArrayList<>();
+
+        Map<String, TeamAllListAdditionalResponseDto> additionalResponseDtoMap = new ConcurrentHashMap<>();
+
+        pages.getContent().forEach((item) -> {
+            teamNameList.add(item.getTeamName());
+        });
+
+        for (String teamName : teamNameList) {
+            Integer finishCount = 0;
+            List<Todo> todoList = todoRepository.findAllByTeam(teamName);
+            for (int i = 0; i < todoList.size(); i++) {
+                if (todoList.get(i).getIsFinish() == true) {
+                    finishCount++;
+                }
+            }
+            additionalResponseDtoMap.put(teamName, new TeamAllListAdditionalResponseDto(teamRepository.findTeamMemberCountByTeamName(teamName), List.of(finishCount, todoList.size()), (finishCount / Double.valueOf(todoList.size()) * 100)));
+        }
+
+        return new TeamAllListResponseDto(pages, additionalResponseDtoMap);
     }
 
     public Page<InviteMemberListRequestDto> getMemberTeamInviteList(String teamName, Integer page) {
