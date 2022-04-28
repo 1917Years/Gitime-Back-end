@@ -32,6 +32,7 @@ public class DevelopField {
     }
 
     public void setTeam(Team team){
+        System.out.println("I COMMIT HERE");
         this.team = team;
         team.getDevelopFields().add(this);
     }
