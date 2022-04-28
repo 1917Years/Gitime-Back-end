@@ -43,6 +43,8 @@ public class MemberTeam extends BaseTimeEntity {
 
     @Builder(builderMethodName = "createMemberTeamEntity")
     public MemberTeam(TeamAuthority teamAuthority, Member member, Team team, TeamMemberStatus teamMemberStatus) {
+        System.out.println("I COMMIT HERE");
+
         this.developField = null;
         this.teamAuthority = teamAuthority;
         this.member = member;
