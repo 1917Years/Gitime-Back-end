@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +46,8 @@ public class TodoService {
 
     @Transactional
     public void createTodo(CreateTodoRequestDto requestDto, Long memberId, String teamName) {
-//        memberDevelopAccessCheck(requestDto.getField(), memberId, teamName);
+/**///        memberDevelopAccessCheck(requestDto.getField(), memberId, teamName);
+
 
         MemberTeam findMemberTeam = memberTeamRepository.findByTeamNameAndMember(memberId, teamName)
                 .orElseThrow(() -> new NotFoundMemberTeamException());

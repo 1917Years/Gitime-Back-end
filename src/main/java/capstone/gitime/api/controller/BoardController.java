@@ -62,5 +62,4 @@ public class BoardController {
         return new ResultResponseDto<>(200, "OK!", Collections.emptyList());
     }
 
-
 }
